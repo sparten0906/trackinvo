@@ -51,6 +51,7 @@ const PAGE_META = {
   '/reports':            { label: 'Reports',            Icon: BarChart3,        appIcon: 'reports',          color: '#4F46E5', bg: '#EEF2FF' },
   '/settings':           { label: 'Settings',           Icon: Settings,         appIcon: 'settings',         color: '#475569', bg: '#F1F5F9' },
   '/sales-returns':      { label: 'Sales Returns',      Icon: RotateCcw,        appIcon: 'sales-returns',    color: '#E11D48', bg: '#FFF1F2' },
+  '/sales-returns/new':  { label: 'Create Return',      Icon: RotateCcw,        appIcon: 'sales-returns',    color: '#E11D48', bg: '#FFF1F2' },
   '/purchase-returns':   { label: 'Purchase Returns',   Icon: PackageX,         appIcon: 'purchase-returns', color: '#DC2626', bg: '#FEF2F2' },
   '/stock-transactions': { label: 'Stock Ledger',       Icon: GitCompareArrows, appIcon: 'stock-ledger',     color: '#0D9488', bg: '#F0FDFA' },
   '/stock-movement':     { label: 'Stock Movement',     Icon: TrendingUp,       appIcon: 'stock-movement',   color: '#0891B2', bg: '#ECFEFF' },

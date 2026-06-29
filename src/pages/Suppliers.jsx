@@ -7,7 +7,7 @@ import { useApp } from '../context/AppContext';
 import Modal from '../components/ui/Modal';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { FormField, Input, Select, Textarea } from '../components/forms/FormField';
-import { searchFilter, validateSupplier, formatDate, formatCurrency } from '../utils/helpers';
+import { searchFilter, validateSupplier, formatDate, formatDateTime, formatCurrency } from '../utils/helpers';
 
 const empty = {
   name: '', email: '', phone: '', address: '',
@@ -130,8 +130,8 @@ export default function Suppliers() {
         padding: '14px 28px', display: 'flex', alignItems: 'center', gap: 16,
       }}>
         <div style={{ marginRight: 4 }}>
-          <h1 style={{ fontSize: 18, fontWeight: 800, letterSpacing: '-0.03em', color: 'var(--text-primary)', lineHeight: 1 }}>
-            Suppliers
+          <h1 style={{ fontSize: 18, fontWeight: 800, letterSpacing: '-0.03em', color: 'var(--text-primary)', lineHeight: 1, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Truck size={18} color="var(--brand)" /> Suppliers
           </h1>
           <p style={{ fontSize: 12, color: 'var(--text-tertiary)', marginTop: 2 }}>
             {activeCount} active · {suppliers.length} total
@@ -454,7 +454,7 @@ export default function Suppliers() {
                           </div>
                           <div style={{ textAlign: 'right', flexShrink: 0 }}>
                             {r.notes && <div style={{ fontSize: 11.5, color: 'var(--text-secondary)', marginBottom: 2, maxWidth: 240, textAlign: 'right' }}>{r.notes}</div>}
-                            <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>{r.createdAt || ''}</div>
+                            <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>{r.createdAt ? formatDateTime(r.createdAt) : ''}</div>
                           </div>
                         </div>
                       ))}

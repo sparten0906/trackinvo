@@ -8,7 +8,7 @@ import { useApp } from '../context/AppContext';
 import Modal from '../components/ui/Modal';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { FormField, Input, Select, Textarea } from '../components/forms/FormField';
-import { formatCurrency, formatDate, generateId, today } from '../utils/helpers';
+import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, generateId, today } from '../utils/helpers';
 import toast from 'react-hot-toast';
 
 /* ── Status config ───────────────────────────────────────────────────────── */
@@ -477,7 +477,9 @@ export default function PurchaseReturns() {
                     onMouseLeave={e => { e.currentTarget.style.background = 'var(--surface)'; }}
                   >
                     <td style={{ padding: '11px 12px', fontWeight: 700, color: 'var(--brand)', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{r.returnNumber}</td>
-                    <td style={{ padding: '11px 12px', color: 'var(--text-tertiary)', whiteSpace: 'nowrap' }}>{formatDate(r.createdAt || r.date)}</td>
+                    <td style={{ padding: '11px 12px', whiteSpace: 'nowrap' }}>
+                      {(() => { const { date, time } = formatDateTimeSplit(r.createdAt || r.date); return (<><div style={{ fontSize: 12, color: 'var(--text-primary)', fontWeight: 600 }}>{date}</div><div style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>{time}</div></>); })()}
+                    </td>
                     <td style={{ padding: '11px 12px', color: 'var(--text-secondary)', maxWidth: 130, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.supplierName || '—'}</td>
                     <td style={{ padding: '11px 12px', color: 'var(--text-primary)', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {firstItem?.productName || '—'}
@@ -697,7 +699,7 @@ export default function PurchaseReturns() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
               {[
                 ['Return No',   selectedReturn.returnNumber],
-                ['Return Date', formatDate(selectedReturn.date || selectedReturn.createdAt)],
+                ['Return Date', formatDateTime(selectedReturn.createdAt || selectedReturn.date)],
                 ['Supplier',    selectedReturn.supplierName || '—'],
                 ['Reason',      REASON_LABELS[selectedReturn.reason] || selectedReturn.reason || '—'],
                 ['Source Type', selSource.type],

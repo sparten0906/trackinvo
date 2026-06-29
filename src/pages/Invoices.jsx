@@ -10,7 +10,7 @@ import InvoiceViewer from '../components/invoice/InvoiceViewer';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import Modal from '../components/ui/Modal';
 import { FormField, Input, Select, Textarea } from '../components/forms/FormField';
-import { formatCurrency, formatDate, today } from '../utils/helpers';
+import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, today } from '../utils/helpers';
 
 const PAY_METHODS = [
   { value: 'cash',          label: 'Cash' },
@@ -90,6 +90,7 @@ export default function Invoices() {
   /* ── Selection / modals ── */
   const [selectedId, setSelected]       = useState(null);
   const [invoiceModal, setInvoiceModal] = useState(false);
+  const [slipOpen, setSlipOpen]         = useState(false);
   const [deleteId, setDeleteId]         = useState(null);
   const [payModal, setPayModal]         = useState(false);
   const [payForm, setPayForm]           = useState({ amount: '', method: 'cash', reference: '', notes: '' });
@@ -180,6 +181,7 @@ export default function Invoices() {
   /* ── Payment modal ── */
   const openInvoiceModal = (id) => {
     setSelected(id);
+    setSlipOpen(false);
     setInvoiceModal(true);
   };
 
@@ -228,7 +230,7 @@ export default function Invoices() {
         {/* Title row */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
           <div>
-            <h1 style={{ fontSize: 20, fontWeight: 900, letterSpacing: '-0.04em', color: 'var(--text-primary)', margin: 0 }}>Invoices</h1>
+            <h1 style={{ fontSize: 20, fontWeight: 900, letterSpacing: '-0.04em', color: 'var(--text-primary)', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}><FileText size={20} color="var(--brand)" /> Invoices</h1>
             <p style={{ fontSize: 12, color: 'var(--text-tertiary)', margin: '2px 0 0' }}>{filtered.length} invoice{filtered.length !== 1 ? 's' : ''} shown</p>
           </div>
           <button onClick={() => navigate('/billing')} style={{ display: 'flex', alignItems: 'center', gap: 7, height: 36, padding: '0 16px', background: 'var(--brand)', color: '#fff', border: 'none', borderRadius: 9, cursor: 'pointer', fontSize: 13, fontWeight: 600, flexShrink: 0 }}>
@@ -384,7 +386,10 @@ export default function Invoices() {
                       onMouseLeave={e => { if (!isSel) e.currentTarget.style.background = 'var(--surface)'; }}
                     >
                       <td style={{ padding: '10px 12px', fontWeight: 700, color: isSel ? 'var(--brand)' : 'var(--text-primary)', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{inv.invoiceNumber}</td>
-                      <td style={{ padding: '10px 12px', color: 'var(--text-tertiary)', whiteSpace: 'nowrap' }}>{formatDate(inv.date)}</td>
+                      <td style={{ padding: '10px 12px', whiteSpace: 'nowrap' }}>
+                        <div style={{ fontSize: 12.5, color: 'var(--text-tertiary)', fontWeight: 500 }}>{formatDate(inv.date)}</div>
+                        {inv.createdAt && (() => { const { date, time } = formatDateTimeSplit(inv.createdAt); return <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)', opacity: 0.7 }}>{time}</div>; })()}
+                      </td>
                       <td style={{ padding: '10px 12px', color: 'var(--text-secondary)', maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cust?.name || '—'}</td>
                       <td style={{ padding: '10px 12px', textAlign: 'right', color: 'var(--text-secondary)' }}>{(inv.items || []).length}</td>
                       <td style={{ padding: '10px 12px', color: 'var(--text-tertiary)', whiteSpace: 'nowrap' }}>{method}</td>
@@ -437,56 +442,196 @@ export default function Invoices() {
       {/* ══════ INVOICE DETAIL MODAL ══════ */}
       <Modal
         open={invoiceModal && !!selInvoice}
-        onClose={() => { setInvoiceModal(false); setSelected(null); }}
-        title={selInvoice ? `${selInvoice.invoiceNumber} — ${selCustomer?.name || 'Invoice'}` : ''}
+        onClose={() => { setInvoiceModal(false); setSelected(null); setSlipOpen(false); }}
+        title={selInvoice ? selInvoice.invoiceNumber : ''}
         size="lg"
       >
         {selInvoice && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-            {/* Action bar */}
-            <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-              <StatusBadge status={selInvoice.paymentStatus} />
-              <span style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{selCustomer?.name || '—'} · {formatDate(selInvoice.date)}</span>
-              <div style={{ flex: 1 }} />
-              {selInvoice.paymentStatus !== 'paid' && (
-                <button onClick={openPayModal} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '5px 12px', background: 'var(--brand)', color: '#fff', border: 'none', borderRadius: 7, cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
-                  <CreditCard size={12} /> Record Payment
-                </button>
-              )}
-              <button onClick={() => window.print()} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '5px 10px', background: 'transparent', color: 'var(--text-secondary)', border: '1.5px solid var(--border)', borderRadius: 7, cursor: 'pointer', fontSize: 12 }}>
-                <Printer size={12} /> Print
-              </button>
-              <button onClick={() => { setDeleteId(selInvoice.id); setInvoiceModal(false); }} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '5px 10px', background: '#FEF2F2', color: '#DC2626', border: 'none', borderRadius: 7, cursor: 'pointer', fontSize: 12 }}>
-                <Trash2 size={12} /> Void
-              </button>
-            </div>
+            {slipOpen ? (
+              /* ── SLIP VIEW ── */
+              <>
+                <button
+                  onClick={() => setSlipOpen(false)}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '5px 12px', marginBottom: 14, border: '1.5px solid var(--border)', borderRadius: 8, background: 'var(--canvas)', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: 12.5, fontWeight: 600, alignSelf: 'flex-start', transition: 'all 0.12s' }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--brand)'; e.currentTarget.style.color = 'var(--brand)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+                >← Back to Details</button>
+                <InvoiceViewer invoice={selInvoice} customer={selCustomer} settings={settings} />
+              </>
+            ) : (
+              /* ── DETAILS VIEW ── */
+              <>
+                {/* Action bar */}
+                <div style={{ display: 'flex', gap: 6, marginBottom: 14, flexWrap: 'wrap', alignItems: 'center' }}>
+                  <StatusBadge status={selInvoice.paymentStatus} />
+                  <div style={{ flex: 1 }} />
+                  <button
+                    onClick={() => setSlipOpen(true)}
+                    style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '5px 12px', background: 'var(--brand-faint)', color: 'var(--brand)', border: '1.5px solid var(--brand-light)', borderRadius: 7, cursor: 'pointer', fontSize: 12, fontWeight: 700 }}
+                  ><Receipt size={12} /> Preview Invoice Slip</button>
+                  {selInvoice.paymentStatus !== 'paid' && (
+                    <button onClick={openPayModal} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '5px 12px', background: 'var(--brand)', color: '#fff', border: 'none', borderRadius: 7, cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
+                      <CreditCard size={12} /> Record Payment
+                    </button>
+                  )}
+                  <button onClick={() => { setDeleteId(selInvoice.id); setInvoiceModal(false); }} style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '5px 10px', background: '#FEF2F2', color: '#DC2626', border: 'none', borderRadius: 7, cursor: 'pointer', fontSize: 12 }}>
+                    <Trash2 size={12} /> Void
+                  </button>
+                </div>
 
-            {/* Payment history */}
-            {selInvoice.payments?.length > 0 && (
-              <div style={{ padding: '10px 14px', background: 'var(--canvas)', border: '1px solid var(--border)', borderRadius: 9, marginBottom: 12 }}>
-                <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-tertiary)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Payment History</div>
-                {selInvoice.payments.map((pmt, i) => (
-                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12, marginBottom: 4 }}>
-                    <div style={{ display: 'flex', gap: 7, alignItems: 'center' }}>
-                      <span style={{ color: 'var(--text-tertiary)' }}>{formatDate(pmt.date)}</span>
-                      <span style={{ background: 'var(--border)', borderRadius: 5, padding: '1px 7px', fontSize: 10.5, fontWeight: 600, color: 'var(--text-secondary)' }}>
-                        {PAY_METHODS.find(m => m.value === pmt.method)?.label || pmt.method}
-                      </span>
-                      {pmt.reference && <span style={{ color: 'var(--text-tertiary)', fontSize: 11 }}>{pmt.reference}</span>}
+                {/* KPI strip */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, marginBottom: 14 }}>
+                  {[
+                    { label: 'Grand Total', value: formatCurrency(selInvoice.grandTotal || 0, sym), fg: '#4F46E5', bg: '#EEF2FF' },
+                    { label: 'Paid',        value: formatCurrency(selInvoice.paidAmount || 0, sym),  fg: '#16A34A', bg: '#F0FDF4' },
+                    { label: 'Balance',     value: formatCurrency(selInvoice.balanceAmount || 0, sym), fg: (selInvoice.balanceAmount || 0) > 0 ? '#DC2626' : '#16A34A', bg: (selInvoice.balanceAmount || 0) > 0 ? '#FEF2F2' : '#F0FDF4' },
+                  ].map(k => (
+                    <div key={k.label} style={{ background: k.bg, borderRadius: 9, padding: '9px 12px', border: `1px solid ${k.fg}22` }}>
+                      <div style={{ fontSize: 9.5, fontWeight: 700, color: k.fg, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 3 }}>{k.label}</div>
+                      <div style={{ fontSize: 16, fontWeight: 900, color: k.fg, fontVariantNumeric: 'tabular-nums' }}>{k.value}</div>
                     </div>
-                    <span style={{ fontWeight: 700, color: '#16A34A' }}>+{formatCurrency(pmt.amount, sym)}</span>
+                  ))}
+                </div>
+
+                {/* Customer + meta grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14, padding: '12px 14px', background: 'var(--canvas)', borderRadius: 10, border: '1px solid var(--border)' }}>
+                  <div>
+                    <div style={{ fontSize: 9.5, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 5 }}>Customer</div>
+                    <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text-primary)' }}>{selCustomer?.name || selInvoice.customerName || 'Walk-in'}</div>
+                    {selCustomer?.phone && <div style={{ fontSize: 12, color: 'var(--text-tertiary)', marginTop: 2 }}>{selCustomer.phone}</div>}
+                    {selCustomer?.email && <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{selCustomer.email}</div>}
                   </div>
-                ))}
-                {selInvoice.paymentStatus !== 'paid' && (
-                  <div style={{ marginTop: 6, display: 'flex', justifyContent: 'flex-end', fontSize: 12, color: 'var(--text-secondary)' }}>
-                    Balance: <strong style={{ marginLeft: 6, color: '#DC2626' }}>{formatCurrency(selInvoice.balanceAmount || 0, sym)}</strong>
+                  <div>
+                    <div style={{ fontSize: 9.5, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 5 }}>Invoice Info</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                        <span style={{ color: 'var(--text-tertiary)' }}>Date</span>
+                        <span style={{ fontWeight: 600 }}>{formatDate(selInvoice.date)}</span>
+                      </div>
+                      {selInvoice.dueDate && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                          <span style={{ color: 'var(--text-tertiary)' }}>Due</span>
+                          <span style={{ fontWeight: 600, color: selInvoice.dueDate < todayStr && selInvoice.paymentStatus !== 'paid' ? '#DC2626' : 'inherit' }}>{formatDate(selInvoice.dueDate)}</span>
+                        </div>
+                      )}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                        <span style={{ color: 'var(--text-tertiary)' }}>Method</span>
+                        <span style={{ fontWeight: 600 }}>{PAY_METHODS.find(m => m.value === selInvoice.paymentMethod)?.label || selInvoice.paymentMethod || '—'}</span>
+                      </div>
+                      {selInvoice.createdAt && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                          <span style={{ color: 'var(--text-tertiary)' }}>Created</span>
+                          <span style={{ fontWeight: 600 }}>{formatDateTime(selInvoice.createdAt)}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Items table */}
+                <div style={{ marginBottom: 14 }}>
+                  <div style={{ fontSize: 9.5, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>Items · {(selInvoice.items || []).length}</div>
+                  <div style={{ border: '1px solid var(--border)', borderRadius: 9, overflow: 'hidden' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12.5 }}>
+                      <thead>
+                        <tr style={{ background: 'var(--canvas)' }}>
+                          {[['Product', 'left'], ['Qty', 'right'], ['Unit', 'right'], ['Disc', 'right'], ['Tax', 'right'], ['Total', 'right']].map(([h, a]) => (
+                            <th key={h} style={{ padding: '7px 10px', textAlign: a, fontSize: 9.5, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(selInvoice.items || []).map((item, i) => {
+                          const lineNet   = Math.max(0, (item.unitPrice || 0) * (item.quantity || 0) - (item.discount || 0));
+                          const lineTax   = lineNet * (item.taxPercent || 0) / 100;
+                          const lineTotal = lineNet + lineTax;
+                          return (
+                            <tr key={i} style={{ borderTop: '1px solid var(--border)', background: i % 2 === 0 ? 'var(--surface)' : 'var(--canvas)' }}>
+                              <td style={{ padding: '8px 10px', fontWeight: 600, color: 'var(--text-primary)' }}>{item.productName}</td>
+                              <td style={{ padding: '8px 10px', textAlign: 'right', color: 'var(--text-secondary)' }}>{item.quantity}</td>
+                              <td style={{ padding: '8px 10px', textAlign: 'right', fontVariantNumeric: 'tabular-nums', color: 'var(--text-secondary)' }}>{formatCurrency(item.unitPrice || 0, sym)}</td>
+                              <td style={{ padding: '8px 10px', textAlign: 'right', fontVariantNumeric: 'tabular-nums', color: (item.discount || 0) > 0 ? '#16A34A' : 'var(--text-tertiary)' }}>{(item.discount || 0) > 0 ? `−${formatCurrency(item.discount, sym)}` : '—'}</td>
+                              <td style={{ padding: '8px 10px', textAlign: 'right', color: 'var(--text-tertiary)' }}>{(item.taxPercent || 0) > 0 ? `${item.taxPercent}%` : '—'}</td>
+                              <td style={{ padding: '8px 10px', textAlign: 'right', fontWeight: 700, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums' }}>{formatCurrency(lineTotal, sym)}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Financial summary */}
+                <div style={{ marginBottom: 14, padding: '12px 14px', background: 'var(--canvas)', borderRadius: 10, border: '1px solid var(--border)' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, color: 'var(--text-secondary)' }}>
+                      <span>Subtotal</span>
+                      <span style={{ fontVariantNumeric: 'tabular-nums' }}>{formatCurrency(selInvoice.subtotal || 0, sym)}</span>
+                    </div>
+                    {(selInvoice.itemDiscounts || 0) > 0 && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, color: '#16A34A' }}>
+                        <span>Discount</span>
+                        <span style={{ fontVariantNumeric: 'tabular-nums' }}>−{formatCurrency(selInvoice.itemDiscounts, sym)}</span>
+                      </div>
+                    )}
+                    {(selInvoice.taxAmount || 0) > 0 && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, color: 'var(--text-secondary)' }}>
+                        <span>Tax</span>
+                        <span style={{ fontVariantNumeric: 'tabular-nums' }}>+{formatCurrency(selInvoice.taxAmount, sym)}</span>
+                      </div>
+                    )}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 16, fontWeight: 900, color: 'var(--text-primary)', borderTop: '2px solid var(--border)', paddingTop: 8, marginTop: 3 }}>
+                      <span>Grand Total</span>
+                      <span style={{ fontVariantNumeric: 'tabular-nums', color: 'var(--brand)' }}>{formatCurrency(selInvoice.grandTotal || 0, sym)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Return status */}
+                {selInvoice.returnStatus && selInvoice.returnStatus !== 'none' && (
+                  <div style={{ marginBottom: 14, padding: '10px 14px', background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 9, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <Receipt size={14} color="#DC2626" />
+                    <div>
+                      <div style={{ fontSize: 12.5, fontWeight: 700, color: '#DC2626' }}>{selInvoice.returnStatus === 'full' ? 'Full Return' : 'Partial Return'}</div>
+                      <div style={{ fontSize: 11, color: '#991B1B', marginTop: 1 }}>Stock restocked. See Sales Returns for details.</div>
+                    </div>
                   </div>
                 )}
-              </div>
-            )}
 
-            {/* Invoice viewer */}
-            <InvoiceViewer invoice={selInvoice} customer={selCustomer} settings={settings} />
+                {/* Payment history */}
+                {selInvoice.payments?.length > 0 && (
+                  <div style={{ marginBottom: 14 }}>
+                    <div style={{ fontSize: 9.5, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>Payment History</div>
+                    <div style={{ border: '1px solid var(--border)', borderRadius: 9, overflow: 'hidden' }}>
+                      {selInvoice.payments.map((pmt, i) => (
+                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', borderTop: i > 0 ? '1px solid var(--border)' : 'none', background: i % 2 === 0 ? 'var(--surface)' : 'var(--canvas)' }}>
+                          <div style={{ display: 'flex', gap: 7, alignItems: 'center' }}>
+                            <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>{formatDate(pmt.date)}</span>
+                            <span style={{ background: 'var(--border)', borderRadius: 5, padding: '1px 7px', fontSize: 10.5, fontWeight: 600, color: 'var(--text-secondary)' }}>{PAY_METHODS.find(m => m.value === pmt.method)?.label || pmt.method}</span>
+                            {pmt.reference && <span style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{pmt.reference}</span>}
+                          </div>
+                          <span style={{ fontWeight: 700, color: '#16A34A', fontVariantNumeric: 'tabular-nums' }}>+{formatCurrency(pmt.amount, sym)}</span>
+                        </div>
+                      ))}
+                    </div>
+                    {selInvoice.paymentStatus !== 'paid' && (
+                      <div style={{ marginTop: 5, display: 'flex', justifyContent: 'flex-end', fontSize: 12, color: 'var(--text-secondary)' }}>
+                        Balance: <strong style={{ marginLeft: 5, color: '#DC2626' }}>{formatCurrency(selInvoice.balanceAmount || 0, sym)}</strong>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Notes */}
+                {selInvoice.notes && (
+                  <div style={{ marginBottom: 4, padding: '10px 14px', background: 'var(--canvas)', borderRadius: 9, border: '1px solid var(--border)' }}>
+                    <div style={{ fontSize: 9.5, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Notes</div>
+                    <div style={{ fontSize: 12.5, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{selInvoice.notes}</div>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         )}
       </Modal>

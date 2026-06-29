@@ -5,7 +5,7 @@ import Modal from '../components/ui/Modal';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import SearchInput from '../components/ui/SearchInput';
 import { FormField, Input, Textarea } from '../components/forms/FormField';
-import { searchFilter, formatDate } from '../utils/helpers';
+import { searchFilter, formatDate, formatDateTime } from '../utils/helpers';
 
 const empty = { name: '', description: '' };
 
@@ -170,7 +170,7 @@ function CategoryCard({ cat, index, productCount, onEdit, onDelete }) {
             {count} {count === 1 ? 'product' : 'products'}
           </span>
           <span style={{ fontSize: 11.5, color: 'var(--text-disabled)' }}>
-            {formatDate(cat.createdAt)}
+            {formatDateTime(cat.createdAt)}
           </span>
         </div>
       </div>
@@ -216,7 +216,7 @@ export default function Categories() {
       {/* ── Page header */}
       <div className="page-header" style={{ marginBottom: 0 }}>
         <div>
-          <h1 className="page-title">Categories</h1>
+          <h1 className="page-title" style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Layers size={20} color="var(--brand)" /> Categories</h1>
           <p className="page-subtitle">
             {categories.length} {categories.length === 1 ? 'category' : 'categories'} · organise your product catalog
           </p>

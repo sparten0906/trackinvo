@@ -6,7 +6,7 @@ import {
   ArrowUpRight, ChevronDown, ChevronUp, Calendar, Check,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { formatCurrency, formatDate, today } from '../utils/helpers';
+import { formatCurrency, formatDate, formatDateTimeSplit, today } from '../utils/helpers';
 import Modal from '../components/ui/Modal';
 import PayableReceiptViewer from '../components/payables/PayableReceiptViewer';
 
@@ -672,7 +672,7 @@ export default function Payables() {
               <div style={{ width: 30, height: 30, borderRadius: 8, background: 'rgba(245,158,11,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Wallet size={16} style={{ color: '#F59E0B' }} />
               </div>
-              <h1 style={{ fontSize: 17, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.02em', margin: 0 }}>Payables</h1>
+              <h1 style={{ fontSize: 17, fontWeight: 800, color: 'var(--text)', letterSpacing: '-0.02em', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}><Wallet size={17} color="var(--brand)" /> Payables</h1>
             </div>
             <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: 0, paddingLeft: 38 }}>
               {payables.filter(r => r.balance > 0).length} outstanding · {payables.length} total records
@@ -775,7 +775,9 @@ export default function Payables() {
                       <td style={{ padding: '10px 10px' }}><TypeBadge type={row.rowType} /></td>
                       <td style={{ padding: '10px 10px', fontWeight: 600, color: 'var(--text)', maxWidth: 175, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={row.displayName}>{row.displayName}</td>
                       <td style={{ padding: '10px 10px', color: 'var(--text-secondary)', maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.vendor !== '—' ? row.vendor : <span style={{ color: 'var(--border)' }}>—</span>}</td>
-                      <td style={{ padding: '10px 10px', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatDate(row.date)}</td>
+                      <td style={{ padding: '10px 10px', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
+                        {(() => { const { date, time } = formatDateTimeSplit(row.date); return <><div style={{ fontSize: 12, color: 'var(--text-primary)', fontWeight: 600 }}>{date}</div>{time && <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>{time}</div>}</>; })()}
+                      </td>
                       <td style={{ padding: '10px 10px', whiteSpace: 'nowrap', color: row.dueDate && row.dueDate < todayStr && row.balance > 0 ? '#DC2626' : 'var(--text-secondary)' }}>
                         {row.dueDate ? formatDate(row.dueDate) : <span style={{ color: 'var(--border)' }}>—</span>}
                       </td>

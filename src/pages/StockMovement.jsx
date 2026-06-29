@@ -5,7 +5,7 @@ import {
   Search, Activity, GitCompareArrows, X,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { formatDate, formatCurrency, searchFilter, filterByDateRange } from '../utils/helpers';
+import { formatDate, formatDateTime, formatCurrency, searchFilter, filterByDateRange } from '../utils/helpers';
 
 const TYPE_META = {
   SALE:              { label: 'Sale',            color: 'var(--error)',   faint: 'var(--error-bg)',    Icon: ArrowDownCircle },
@@ -69,7 +69,7 @@ export default function StockMovement() {
       pct:    (Number(t.newStock || 0) / max) * 100,
       color:  barColor(Number(t.newStock || 0), selectedProduct?.minStock ?? 0),
       opacity: 0.4 + (i / Math.max(slice.length - 1, 1)) * 0.6,
-      label:  formatDate(t.createdAt),
+      label:  formatDateTime(t.createdAt),
     }));
   }, [productTxns, selectedProduct]);
 
@@ -366,7 +366,7 @@ export default function StockMovement() {
                                   <span style={{ fontSize: 11, fontFamily: 'monospace', color: 'var(--brand)', fontWeight: 600 }}>{t.referenceNumber}</span>
                                 )}
                               </div>
-                              <p style={{ fontSize: 11.5, color: 'var(--text-tertiary)' }}>{formatDate(t.createdAt)}</p>
+                              <p style={{ fontSize: 11.5, color: 'var(--text-tertiary)' }}>{formatDateTime(t.createdAt)}</p>
                               {t.note && <p style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>{t.note}</p>}
                             </div>
 

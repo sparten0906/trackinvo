@@ -14,6 +14,7 @@ import Purchases from './pages/Purchases';
 import PurchaseOrders from './pages/PurchaseOrders';
 import Reports from './pages/Reports';
 import SalesReturns from './pages/SalesReturns';
+import SalesReturnNew from './pages/SalesReturnNew';
 import PurchaseReturns from './pages/PurchaseReturns';
 import StockTransactions from './pages/StockTransactions';
 import StockMovement from './pages/StockMovement';
@@ -48,6 +49,7 @@ export default function App() {
         <Route path="purchase-orders"      element={<PurchaseOrders />} />
         <Route path="supplier-payments"   element={<SupplierPayments />} />
         <Route path="sales-returns"     element={<SalesReturns />} />
+        <Route path="sales-returns/new" element={<SalesReturnNew />} />
         <Route path="purchase-returns"  element={<PurchaseReturns />} />
         <Route path="stock-transactions" element={<StockTransactions />} />
         <Route path="stock-movement"     element={<StockMovement />} />

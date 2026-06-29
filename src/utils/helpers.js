@@ -1,13 +1,42 @@
+// All date/time formatting is delegated to the central dateTime utility.
+// Re-exported here so existing imports from helpers.js continue to work.
+import {
+  formatDate as _formatDate,
+  formatDateOnly as _formatDateOnly,
+  formatDateTime as _formatDateTime,
+  formatDateTimeShort as _formatDateTimeShort,
+  formatDateTimeSplit as _formatDateTimeSplit,
+  formatTime as _formatTime,
+  formatDateForInput as _fmtDateForInput,
+  getTodayLocalDate as _getTodayLocalDate,
+  startOfLocalDay as _startOfLocalDay,
+  endOfLocalDay as _endOfLocalDay,
+  toLocalDateRange as _toLocalDateRange,
+  isWithinLocalDateRange as _isWithinLocalDateRange,
+  setAppTimezone as _setAppTimezone,
+  getAppTimezone as _getAppTimezone,
+} from './dateTime.js';
+
+export const formatDate             = _formatDate;
+export const formatDateOnly         = _formatDateOnly;
+export const formatDateTime         = _formatDateTime;
+export const formatDateTimeShort    = _formatDateTimeShort;
+export const formatDateTimeSplit    = _formatDateTimeSplit;
+export const formatTime             = _formatTime;
+export const formatDateForInput     = _fmtDateForInput;
+export const getTodayLocalDate      = _getTodayLocalDate;
+export const startOfLocalDay        = _startOfLocalDay;
+export const endOfLocalDay          = _endOfLocalDay;
+export const toLocalDateRange       = _toLocalDateRange;
+export const isWithinLocalDateRange = _isWithinLocalDateRange;
+export const setAppTimezone         = _setAppTimezone;
+export const getAppTimezone         = _getAppTimezone;
+
 // ─── FORMATTING ───────────────────────────────────────────────────────────────
 export const formatCurrency = (amount, symbol = '$') =>
   `${symbol}${Number(amount || 0).toFixed(2)}`;
 
-export const formatDate = (dateStr) => {
-  if (!dateStr) return '—';
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-};
-
+// Legacy shim: converts an ISO or YYYY-MM-DD string to "YYYY-MM-DD" for inputs.
 export const formatDateInput = (dateStr) => {
   if (!dateStr) return '';
   return dateStr.slice(0, 10);
@@ -37,24 +66,11 @@ export const generateReturnNumber = (prefix, existingReturns) => {
 export const calcItemSubtotal = (item) =>
   Number(item.unitPrice) * Number(item.quantity);
 
-// Per-item tax calculated on the discounted line amount
 export const calcItemTax = (item) => {
   const lineNet = calcItemSubtotal(item) - Number(item.discount || 0);
   return (Math.max(0, lineNet) * Number(item.taxPercent || 0)) / 100;
 };
 
-/**
- * Full invoice totals supporting both item-level and invoice-level discounts.
- *
- * Returns:
- *   subtotal          — sum of (unitPrice × qty) before any discount
- *   itemDiscounts     — sum of per-item discount fields
- *   invoiceDiscount   — invoice-level discount amount
- *   discountAmount    — itemDiscounts + invoiceDiscount
- *   taxableAmount     — subtotal − discountAmount (clamped ≥ 0)
- *   taxAmount         — tax on taxable amount (per item rates)
- *   grandTotal        — taxableAmount + taxAmount
- */
 export const calcInvoiceTotals = (items, discountType, discountValue) => {
   const subtotal = items.reduce((s, it) => s + calcItemSubtotal(it), 0);
   const itemDiscounts = items.reduce((s, it) => s + Number(it.discount || 0), 0);
@@ -72,7 +88,6 @@ export const calcInvoiceTotals = (items, discountType, discountValue) => {
   const discountAmount = itemDiscounts + invoiceDiscount;
   const taxableAmount  = Math.max(0, subtotal - discountAmount);
 
-  // Invoice-level discount ratio applied proportionally across items for tax calc
   const invDiscRatio = afterItemDiscounts > 0 ? invoiceDiscount / afterItemDiscounts : 0;
   const taxAmount = items.reduce((s, it) => {
     const lineNet  = Math.max(0, calcItemSubtotal(it) - Number(it.discount || 0));
@@ -150,14 +165,10 @@ export const paginate = (items, page, pageSize) => {
 };
 
 // ─── REPORT HELPERS ───────────────────────────────────────────────────────────
+
+// Timezone-aware date-range filter. Handles both ISO timestamps and YYYY-MM-DD strings.
 export const filterByDateRange = (items, from, to, dateField = 'date') =>
-  items.filter((item) => {
-    const d = item[dateField];
-    if (!d) return false;
-    if (from && d < from) return false;
-    if (to   && d > to)   return false;
-    return true;
-  });
+  items.filter((item) => _isWithinLocalDateRange(item[dateField], from || null, to || null));
 
 export const sumField = (items, field) =>
   items.reduce((s, it) => s + Number(it[field] || 0), 0);
@@ -205,4 +216,5 @@ export const validateSupplier = (data) => {
   return errors;
 };
 
-export const today = () => new Date().toISOString().slice(0, 10);
+// Returns today's date as "YYYY-MM-DD" in the business timezone (Asia/Kolkata by default).
+export const today = () => _getTodayLocalDate();

@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import Modal from '../components/ui/Modal';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { FormField, Input, Select, Textarea } from '../components/forms/FormField';
-import { searchFilter, validateCustomer, formatCurrency, formatDate } from '../utils/helpers';
+import { searchFilter, validateCustomer, formatCurrency, formatDate, formatDateTime, formatDateTimeSplit } from '../utils/helpers';
 import toast from 'react-hot-toast';
 
 /* ── Avatar ─────────────────────────────────────────────────────────── */
@@ -231,7 +231,7 @@ export default function Customers() {
         {/* Header row */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, gap: 12 }}>
           <div>
-            <h1 style={{ fontSize: 20, fontWeight: 900, letterSpacing: '-0.04em', color: 'var(--text-primary)' }}>Customers</h1>
+            <h1 style={{ fontSize: 20, fontWeight: 900, letterSpacing: '-0.04em', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 8 }}><Users size={20} color="var(--brand)" /> Customers</h1>
             <p style={{ fontSize: 12.5, color: 'var(--text-tertiary)', marginTop: 2 }}>{totalCustomers} total · {activeCustomers} active</p>
           </div>
           <button onClick={openAdd} style={{ display: 'flex', alignItems: 'center', gap: 7, height: 36, padding: '0 16px', background: 'var(--brand)', color: '#fff', border: 'none', borderRadius: 9, cursor: 'pointer', fontSize: 13, fontWeight: 600, flexShrink: 0 }}>

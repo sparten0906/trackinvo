@@ -7,7 +7,7 @@ import {
 import { useApp } from '../context/AppContext';
 import Modal from '../components/ui/Modal';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
-import { formatDate, formatCurrency, searchFilter, today } from '../utils/helpers';
+import { formatDate, formatDateTime, formatDateTimeSplit, formatCurrency, searchFilter, today } from '../utils/helpers';
 import toast from 'react-hot-toast';
 
 const STATUS_CFG = {
@@ -199,7 +199,9 @@ export default function DamagedStock() {
                       onMouseEnter={e => e.currentTarget.style.background = 'var(--canvas)'}
                       onMouseLeave={e => e.currentTarget.style.background = ''}>
                       <td style={{ padding: '10px 14px', fontWeight: 700, color: '#D97706', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{rec.damageNumber}</td>
-                      <td style={{ padding: '10px 14px', color: 'var(--text-tertiary)', whiteSpace: 'nowrap' }}>{formatDate(rec.reportedDate || rec.createdAt)}</td>
+                      <td style={{ padding: '10px 14px', whiteSpace: 'nowrap' }}>
+                        {(() => { const { date, time } = formatDateTimeSplit(rec.reportedDate || rec.createdAt); return (<><div style={{ fontSize: 12, color: 'var(--text-primary)', fontWeight: 600 }}>{date}</div><div style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>{time}</div></>); })()}
+                      </td>
                       <td style={{ padding: '10px 14px', fontWeight: 600, color: 'var(--text-primary)', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{rec.productName}</td>
                       <td style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontFamily: 'monospace', fontSize: 11.5, whiteSpace: 'nowrap' }}>{rec.sku || '—'}</td>
                       <td style={{ padding: '10px 14px', textAlign: 'center', fontWeight: 800, color: '#DC2626' }}>{rec.quantity}</td>
@@ -263,7 +265,7 @@ export default function DamagedStock() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
               {[
                 ['Damage No',   selectedRecord.damageNumber],
-                ['Reported',    formatDate(selectedRecord.reportedDate || selectedRecord.createdAt)],
+                ['Reported',    formatDateTime(selectedRecord.reportedDate || selectedRecord.createdAt)],
                 ['Product',     selectedRecord.productName],
                 ['SKU',         selectedRecord.sku || '—'],
                 ['Quantity',    selectedRecord.quantity + ' units'],
@@ -294,7 +296,7 @@ export default function DamagedStock() {
             {selectedRecord.resolvedDate && (
               <div style={{ background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 9, padding: '10px 14px' }}>
                 <div style={{ fontSize: 10, fontWeight: 700, color: '#166534', textTransform: 'uppercase', marginBottom: 3 }}>Resolved</div>
-                <div style={{ fontSize: 13, color: '#166534', fontWeight: 600 }}>{formatDate(selectedRecord.resolvedDate)}</div>
+                <div style={{ fontSize: 13, color: '#166534', fontWeight: 600 }}>{formatDateTime(selectedRecord.resolvedDate)}</div>
               </div>
             )}
             {selectedRecord.status === 'returned_rejected' && (

@@ -598,6 +598,20 @@ function SystemSection({ form, set }) {
     <>
       <SectionCard title="Format Settings">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <FormField label="Business Timezone" hint="All dates and times are displayed in this timezone">
+            <Select value={form.businessTimezone || 'Asia/Kolkata'} onChange={e => set('businessTimezone', e.target.value)}>
+              <option value="Asia/Kolkata">Asia/Kolkata — IST (UTC +5:30)</option>
+              <option value="Asia/Dubai">Asia/Dubai — GST (UTC +4:00)</option>
+              <option value="Asia/Singapore">Asia/Singapore — SGT (UTC +8:00)</option>
+              <option value="Asia/Tokyo">Asia/Tokyo — JST (UTC +9:00)</option>
+              <option value="Europe/London">Europe/London — GMT/BST</option>
+              <option value="Europe/Paris">Europe/Paris — CET (UTC +1:00)</option>
+              <option value="America/New_York">America/New_York — EST/EDT</option>
+              <option value="America/Chicago">America/Chicago — CST/CDT</option>
+              <option value="America/Los_Angeles">America/Los_Angeles — PST/PDT</option>
+              <option value="UTC">UTC — Coordinated Universal Time</option>
+            </Select>
+          </FormField>
           <FormField label="Date Format" hint="How dates are displayed throughout the app">
             <Select value={form.dateFormat || 'DD/MM/YYYY'} onChange={e => set('dateFormat', e.target.value)}>
               <option value="DD/MM/YYYY">DD/MM/YYYY  (31/12/2025)</option>
@@ -715,7 +729,7 @@ export default function SettingsPage() {
 
       {/* ── Page header ── */}
       <div style={{ flexShrink: 0, padding: '16px 24px', background: 'var(--surface)', borderBottom: '1px solid var(--border)' }}>
-        <h1 style={{ fontSize: 20, fontWeight: 900, letterSpacing: '-0.04em', color: 'var(--text-primary)', margin: 0 }}>Settings</h1>
+        <h1 style={{ fontSize: 20, fontWeight: 900, letterSpacing: '-0.04em', color: 'var(--text-primary)', margin: 0, display: 'flex', alignItems: 'center', gap: 8 }}><SlidersHorizontal size={20} color="var(--brand)" /> Settings</h1>
         <p style={{ fontSize: 12, color: 'var(--text-tertiary)', margin: '3px 0 0' }}>
           Manage your business configuration, taxes, documents, and preferences
         </p>

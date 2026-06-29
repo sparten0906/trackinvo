@@ -8,7 +8,7 @@ import { useApp } from '../context/AppContext';
 import Modal from '../components/ui/Modal';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { FormField, Input, Select } from '../components/forms/FormField';
-import { formatCurrency, formatDate, searchFilter, today, calcPurchaseTotals } from '../utils/helpers';
+import { formatCurrency, formatDate, formatDateTime, searchFilter, today, calcPurchaseTotals } from '../utils/helpers';
 import toast from 'react-hot-toast';
 
 const emptyForm = { supplierId: '', date: today(), expectedDate: today(), paymentStatus: 'paid', status: 'received', notes: '' };
@@ -141,7 +141,7 @@ export default function Purchases() {
       <div style={{ flexShrink: 0, padding: '20px 24px 0', borderBottom: '1px solid var(--border)', background: 'var(--surface)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, gap: 12 }}>
           <div>
-            <h1 style={{ fontSize: 20, fontWeight: 900, letterSpacing: '-0.04em', color: 'var(--text-primary)' }}>Purchases</h1>
+            <h1 style={{ fontSize: 20, fontWeight: 900, letterSpacing: '-0.04em', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 8 }}><ShoppingCart size={20} color="var(--brand)" /> Purchases</h1>
             <p style={{ fontSize: 12.5, color: 'var(--text-tertiary)', marginTop: 2 }}>{purchases.length} orders · {kpi.pendingCount} pending</p>
           </div>
           <button onClick={openNew} style={{ display: 'flex', alignItems: 'center', gap: 7, height: 36, padding: '0 16px', background: 'var(--brand)', color: '#fff', border: 'none', borderRadius: 9, cursor: 'pointer', fontSize: 13, fontWeight: 600, flexShrink: 0 }}>
@@ -249,6 +249,7 @@ export default function Purchases() {
                     <StatusBadge status={selPurchase.status} />
                     <PayBadge status={selPurchase.paymentStatus} />
                     <span style={{ fontSize: 11.5, color: 'var(--text-tertiary)' }}>{formatDate(selPurchase.date)}</span>
+                    {selPurchase.createdAt && <span style={{ fontSize: 11.5, color: 'var(--text-tertiary)' }}>{formatDateTime(selPurchase.createdAt)}</span>}
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: 6 }}>
@@ -337,6 +338,24 @@ export default function Purchases() {
                 <div style={{ background: '#FEFCE8', borderRadius: 10, padding: '12px 14px', border: '1px solid #FEF08A' }}>
                   <p style={{ fontSize: 10.5, fontWeight: 700, color: '#A16207', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>Notes</p>
                   <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{selPurchase.notes}</p>
+                </div>
+              )}
+
+              {/* Timestamps */}
+              {(selPurchase.receivedAt || selPurchase.completedAt) && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, paddingTop: 4 }}>
+                  {selPurchase.receivedAt && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: 11.5, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Received At</span>
+                      <span style={{ fontSize: 12.5, color: 'var(--text-secondary)' }}>{formatDateTime(selPurchase.receivedAt)}</span>
+                    </div>
+                  )}
+                  {selPurchase.completedAt && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: 11.5, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Completed At</span>
+                      <span style={{ fontSize: 12.5, color: 'var(--text-secondary)' }}>{formatDateTime(selPurchase.completedAt)}</span>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

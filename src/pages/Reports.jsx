@@ -6,7 +6,7 @@ import {
   Activity, Wallet, Layers, ChevronRight, ChevronLeft, ArrowUpRight,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { formatCurrency, formatDate, filterByDateRange, isLowStock, sumField } from '../utils/helpers';
+import { formatCurrency, formatDate, formatDateTime, filterByDateRange, isLowStock, sumField } from '../utils/helpers';
 import {
   exportSales, exportPurchases, exportProfit, exportTax, exportPayments,
   exportSalesReturns, exportPurchaseReturns, exportStock, exportStockMovements,
@@ -393,7 +393,7 @@ export default function Reports() {
           {/* Header + date presets */}
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 28, gap: 16, flexWrap: 'wrap' }}>
             <div>
-              <h1 style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.03em', color: 'var(--text-primary)', marginBottom: 4 }}>Reports</h1>
+              <h1 style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.03em', color: 'var(--text-primary)', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}><BarChart3 size={22} color="var(--brand)" /> Reports</h1>
               <p style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>Analyze your business performance &middot; {periodLabel}</p>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
@@ -1101,7 +1101,7 @@ export default function Reports() {
                     const meta = STOCK_TYPE_META[t.transactionType] || STOCK_TYPE_META.MANUAL_ADJUSTMENT;
                     return (
                       <tr key={t.id} className="tr">
-                        <td className="td text-xs" style={{ color: 'var(--text-secondary)' }}>{formatDate(t.createdAt)}</td>
+                        <td className="td text-xs" style={{ color: 'var(--text-secondary)' }}>{formatDateTime(t.createdAt)}</td>
                         <td className="td">
                           <p className="font-medium" style={{ fontSize: 13 }}>{t.productName}</p>
                           <p className="font-mono text-xs" style={{ color: 'var(--text-tertiary)' }}>{t.sku}</p>
@@ -1136,7 +1136,7 @@ export default function Reports() {
                       <span className="badge badge-neutral" style={{ color: meta.color }}>{meta.label}</span>
                     </div>
                     <div className="flex gap-4 text-xs" style={{ color: 'var(--text-tertiary)' }}>
-                      <span>{formatDate(t.createdAt)}</span>
+                      <span>{formatDateTime(t.createdAt)}</span>
                       {t.quantityIn  > 0 && <span style={{ color: 'var(--emerald)' }}>+{t.quantityIn}</span>}
                       {t.quantityOut > 0 && <span style={{ color: 'var(--error)' }}>−{t.quantityOut}</span>}
                       <span>Balance: <span className="num font-semibold" style={{ color: 'var(--text-primary)' }}>{t.newStock}</span></span>

@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { X, Printer, Share2 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { formatCurrency, formatDate } from '../../utils/helpers';
+import { formatCurrency, formatDate, formatDateTime } from '../../utils/helpers';
 import toast from 'react-hot-toast';
 
 // ─── Amount in Words (Indian format) ─────────────────────────────────────────
@@ -93,7 +93,7 @@ export function PayableReceiptDocument({ data }) {
               <tbody>
                 <tr>
                   <td style={{ fontSize: 10, color: '#94A3B8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', paddingRight: 10, paddingBottom: 3 }}>Date</td>
-                  <td style={{ fontSize: 11.5, color: '#0F172A', fontWeight: 700, paddingBottom: 3, textAlign: 'right' }}>{formatDate(paymentDate)}</td>
+                  <td style={{ fontSize: 11.5, color: '#0F172A', fontWeight: 700, paddingBottom: 3, textAlign: 'right' }}>{formatDateTime(paymentDate)}</td>
                 </tr>
                 <tr>
                   <td style={{ fontSize: 10, color: '#94A3B8', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', paddingRight: 10, paddingBottom: 3 }}>Type</td>

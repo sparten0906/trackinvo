@@ -15,7 +15,7 @@ import {
 } from '../data/mockData';
 import {
   generateId, generateInvoiceNumber, generateReturnNumber,
-  calcBalance, derivePaymentStatus,
+  calcBalance, derivePaymentStatus, setAppTimezone,
 } from '../utils/helpers';
 import { isSupabaseConfigured } from '../lib/supabaseClient';
 import { productService }  from '../services/productService';
@@ -39,6 +39,11 @@ function saveLocal(state) {
 }
 
 const saved = loadLocal();
+
+// Prime the timezone from persisted settings immediately so formatters are correct before Supabase loads.
+if (saved?.settings?.businessTimezone) {
+  setAppTimezone(saved.settings.businessTimezone);
+}
 
 const initialState = {
   categories:         saved?.categories         ?? initialCategories,
@@ -249,6 +254,26 @@ function reducer(state, action) {
           prevStock, newStock, note,
         }));
         return { ...p, stock: newStock };
+      });
+      next = { ...state, products, stockTransactions: [...state.stockTransactions, ...newTxs] };
+      break;
+    }
+
+    case 'ADJUST_DAMAGED_STOCK': {
+      const { productId, delta, txType, note } = action.payload;
+      const newTxs = [];
+      const products = state.products.map(p => {
+        if (p.id !== productId) return p;
+        const newDmg = Math.max(0, (p.damagedQty || 0) + delta);
+        newTxs.push(makeStxRecord({
+          productId: p.id, productName: p.name, sku: p.sku,
+          type: txType || 'DAMAGED_WRITEOFF',
+          refType: 'adjustment', refId: '', refNumber: '',
+          nonSellableQtyIn:  delta > 0 ? delta : 0,
+          nonSellableQtyOut: delta < 0 ? Math.abs(delta) : 0,
+          prevStock: p.stock, newStock: p.stock, note: note || '',
+        }));
+        return { ...p, damagedQty: newDmg };
       });
       next = { ...state, products, stockTransactions: [...state.stockTransactions, ...newTxs] };
       break;
@@ -1711,6 +1736,7 @@ export function AppProvider({ children }) {
       if (invoices)   seed.invoices   = invoices;
       if (purchases)  seed.purchases  = purchases;
       if (settings)   seed.settings   = { ...initialState.settings, ...settings };
+      if (seed.settings?.businessTimezone) setAppTimezone(seed.settings.businessTimezone);
       if (Object.keys(seed).length) dispatch({ type: 'SEED', payload: seed });
     }).finally(() => setDbLoading(false));
   }, []);
@@ -1741,6 +1767,10 @@ export function AppProvider({ children }) {
       await tryService(() => productService.adjustStock(productId, delta, note));
       dispatch({ type: 'ADJUST_STOCK', payload: { productId, delta, note, refType, refId, refNumber } });
       toast.success('Stock adjusted');
+    }, []),
+
+    adjustDamagedStock: useCallback((productId, delta, note = '', txType = 'DAMAGED_WRITEOFF') => {
+      dispatch({ type: 'ADJUST_DAMAGED_STOCK', payload: { productId, delta, note, txType } });
     }, []),
 
     // INVOICES
@@ -1964,6 +1994,7 @@ export function AppProvider({ children }) {
     updateSettings: useCallback(async (data) => {
       await tryService(() => settingsService.save(data));
       dispatch({ type: 'UPDATE_SETTINGS', payload: data });
+      if (data.businessTimezone) setAppTimezone(data.businessTimezone);
       toast.success('Settings saved');
     }, []),
 

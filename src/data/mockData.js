@@ -146,6 +146,9 @@ export const initialSettings = {
   stateCode:        '27',            // 2-digit GST state code
   transactionType:  'intrastate',    // intrastate | interstate
 
+  // Timezone
+  businessTimezone: 'Asia/Kolkata',
+
   // Currency
   currency:        'INR',
   currencySymbol:  '₹',

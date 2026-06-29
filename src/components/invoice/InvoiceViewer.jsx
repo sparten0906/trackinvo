@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { CheckCircle2, Plus, X, Printer, Receipt } from 'lucide-react';
-import { formatCurrency, formatDate } from '../../utils/helpers';
+import { formatCurrency, formatDate, formatDateTime } from '../../utils/helpers';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import toast from 'react-hot-toast';
@@ -59,10 +59,7 @@ export function InvoiceDocument({ invoice, settings, sym, customer }) {
   const isPaid    = paymentStatus === 'paid';
   const isPartial = paymentStatus === 'partial';
 
-  const hasTime = createdAt && createdAt.includes('T');
-  const timeStr = hasTime
-    ? new Intl.DateTimeFormat('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }).format(new Date(createdAt))
-    : null;
+  const createdAtFormatted = createdAt ? formatDateTime(createdAt) : null;
 
   const badgeBg    = isPaid ? '#DCFCE7' : isPartial ? '#FEF9C3' : '#FEE2E2';
   const badgeColor = isPaid ? '#166534' : isPartial ? '#92400E' : '#991B1B';
@@ -200,10 +197,10 @@ export function InvoiceDocument({ invoice, settings, sym, customer }) {
                       <td style={metaL}>Invoice Date</td>
                       <td style={metaV}>{formatDate(date)}</td>
                     </tr>
-                    {timeStr && (
+                    {createdAtFormatted && (
                       <tr>
-                        <td style={metaL}>Time</td>
-                        <td style={metaV}>{timeStr}</td>
+                        <td style={metaL}>Created</td>
+                        <td style={metaV}>{createdAtFormatted}</td>
                       </tr>
                     )}
                     {dueDate && (
