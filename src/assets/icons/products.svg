@@ -1,0 +1,14 @@
+<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Top face of isometric box -->
+  <path d="M24 4L44 14L24 24L4 14Z" fill="#0EA5E9"/>
+  <!-- Top face highlight -->
+  <path d="M24 4L34 9L24 14L14 9Z" fill="#38BDF8"/>
+  <!-- Left face -->
+  <path d="M4 14L24 24L24 44L4 34Z" fill="#0369A1"/>
+  <!-- Right face -->
+  <path d="M44 14L24 24L24 44L44 34Z" fill="#0891B2"/>
+  <!-- Edge lines for definition -->
+  <path d="M24 4L44 14L24 24L4 14Z" fill="none" stroke="#E0F2FE" stroke-width="0.5" opacity="0.6"/>
+  <!-- Center crease (vertical) -->
+  <line x1="24" y1="24" x2="24" y2="44" stroke="#BAE6FD" stroke-width="0.75" opacity="0.5"/>
+</svg>

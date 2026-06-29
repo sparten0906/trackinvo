@@ -1,0 +1,14 @@
+<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Bell body -->
+  <path d="M24 7 C15 7 9 13.5 9 22 L9 34 L6 37 L42 37 L39 34 L39 22 C39 13.5 33 7 24 7 Z" fill="#F59E0B"/>
+  <!-- Bell body inner highlight -->
+  <path d="M24 9 C16 9 11 15 11 22 L11 34 L37 34 L37 22 C37 15 32 9 24 9 Z" fill="#FCD34D"/>
+  <!-- Bell handle (top) -->
+  <path d="M20 7 C20 4.5 22 3 24 3 C26 3 28 4.5 28 7" stroke="#D97706" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Bell clapper (bottom) -->
+  <path d="M18 37 C18 41.5 30 41.5 30 37" fill="#D97706"/>
+  <circle cx="24" cy="43" r="4" fill="#D97706"/>
+  <!-- Notification dot -->
+  <circle cx="37" cy="11" r="7" fill="#EF4444"/>
+  <circle cx="37" cy="11" r="4.5" fill="#FCA5A5"/>
+</svg>

@@ -1,0 +1,20 @@
+<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Banknote body -->
+  <rect x="2" y="14" width="44" height="26" rx="6" fill="#16A34A"/>
+  <!-- Banknote inner area -->
+  <rect x="6" y="18" width="36" height="18" rx="3" fill="#15803D"/>
+  <!-- Main coin / medallion -->
+  <circle cx="24" cy="27" r="9" fill="#22C55E"/>
+  <!-- Dollar symbol (vertical bar) -->
+  <rect x="22.5" y="20" width="3" height="14" rx="1.5" fill="#14532D"/>
+  <!-- Dollar top curve -->
+  <path d="M20 23.5 C20 21 28 21 28 23.5 C28 26 20 26 20 28.5 C20 31 28 31 28 28.5" stroke="#14532D" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Decorative oval ends -->
+  <ellipse cx="8" cy="27" rx="3" ry="6" fill="#15803D" opacity="0.6"/>
+  <ellipse cx="40" cy="27" rx="3" ry="6" fill="#15803D" opacity="0.6"/>
+  <!-- Corner stars/dots -->
+  <circle cx="9" cy="19" r="2" fill="#4ADE80" opacity="0.6"/>
+  <circle cx="39" cy="19" r="2" fill="#4ADE80" opacity="0.6"/>
+  <circle cx="9" cy="35" r="2" fill="#4ADE80" opacity="0.6"/>
+  <circle cx="39" cy="35" r="2" fill="#4ADE80" opacity="0.6"/>
+</svg>

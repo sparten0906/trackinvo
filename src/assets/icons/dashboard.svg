@@ -1,0 +1,19 @@
+<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Base line -->
+  <rect x="3" y="40" width="42" height="3" rx="1.5" fill="#CBD5E1"/>
+  <!-- Bar 1 (short) - cyan -->
+  <rect x="4" y="29" width="10" height="11" rx="3" fill="#22D3EE"/>
+  <rect x="4" y="29" width="10" height="4" rx="3" fill="#67E8F9"/>
+  <!-- Bar 2 (medium) - indigo -->
+  <rect x="18" y="21" width="10" height="19" rx="3" fill="#6366F1"/>
+  <rect x="18" y="21" width="10" height="4" rx="3" fill="#818CF8"/>
+  <!-- Bar 3 (tall) - violet -->
+  <rect x="32" y="11" width="10" height="29" rx="3" fill="#8B5CF6"/>
+  <rect x="32" y="11" width="10" height="4" rx="3" fill="#A78BFA"/>
+  <!-- Trend line -->
+  <path d="M9 26.5 L23 18.5 L37 8.5" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Trend dots -->
+  <circle cx="9" cy="26.5" r="3" fill="#FCD34D"/>
+  <circle cx="23" cy="18.5" r="3" fill="#FCD34D"/>
+  <circle cx="37" cy="8.5" r="3" fill="#FCD34D"/>
+</svg>

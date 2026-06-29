@@ -1,0 +1,16 @@
+<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Receipt/document base -->
+  <rect x="6" y="18" width="26" height="28" rx="4" fill="#FECDD3"/>
+  <!-- Receipt header -->
+  <rect x="6" y="18" width="26" height="9" rx="4" fill="#E11D48"/>
+  <rect x="6" y="24" width="26" height="3" fill="#E11D48"/>
+  <!-- Receipt content lines -->
+  <rect x="10" y="32" width="18" height="2.5" rx="1.25" fill="#9F1239" opacity="0.5"/>
+  <rect x="10" y="37.5" width="13" height="2.5" rx="1.25" fill="#9F1239" opacity="0.5"/>
+  <!-- Receipt zigzag bottom -->
+  <path d="M6 46 L9 43 L12 46 L15 43 L18 46 L21 43 L24 46 L27 43 L32 43 L32 46 Z" fill="#FECDD3"/>
+  <!-- Return arrow (large, curving left) -->
+  <path d="M40 8 C46 8 47 16 47 20 C47 28 41 32 36 28" stroke="#E11D48" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <!-- Arrow head -->
+  <path d="M31 26 L36 28 L34 34" stroke="#E11D48" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

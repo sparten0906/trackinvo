@@ -1,0 +1,13 @@
+<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Glass circle outer (border) -->
+  <circle cx="20" cy="20" r="16" fill="#DBEAFE" stroke="#2563EB" stroke-width="3.5"/>
+  <!-- Glass circle inner (lens) -->
+  <circle cx="20" cy="20" r="10" fill="white"/>
+  <!-- Lens glare lines -->
+  <line x1="14" y1="20" x2="26" y2="20" stroke="#BFDBFE" stroke-width="2" stroke-linecap="round"/>
+  <line x1="20" y1="14" x2="20" y2="26" stroke="#BFDBFE" stroke-width="2" stroke-linecap="round"/>
+  <!-- Handle -->
+  <rect x="31" y="30" width="15" height="6" rx="3" fill="#2563EB" transform="rotate(45 31 30)"/>
+  <!-- Handle end cap -->
+  <circle cx="43" cy="42" r="3" fill="#1D4ED8"/>
+</svg>

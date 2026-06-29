@@ -1,0 +1,19 @@
+<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Box body -->
+  <rect x="10" y="22" width="30" height="22" rx="4" fill="#FEE2E2"/>
+  <!-- Box lid -->
+  <rect x="8" y="16" width="34" height="9" rx="3" fill="#DC2626"/>
+  <!-- Lid highlight -->
+  <rect x="8" y="16" width="34" height="4" rx="3" fill="#EF4444"/>
+  <!-- Tape strip on box -->
+  <rect x="23" y="16" width="7" height="9" fill="#B91C1C"/>
+  <rect x="23" y="25" width="7" height="10" fill="#B91C1C" opacity="0.35"/>
+  <!-- Box label -->
+  <rect x="14" y="30" width="14" height="9" rx="2" fill="#FCA5A5"/>
+  <rect x="15" y="32" width="12" height="2" rx="1" fill="#DC2626" opacity="0.5"/>
+  <rect x="15" y="35.5" width="8" height="2" rx="1" fill="#DC2626" opacity="0.5"/>
+  <!-- Return arrow (curved, going left) -->
+  <path d="M10 10 C4 10 2 4 8 4 L22 4" stroke="#DC2626" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <!-- Arrow head pointing right toward box -->
+  <path d="M16 0.5 L22 4 L16 7.5" stroke="#DC2626" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

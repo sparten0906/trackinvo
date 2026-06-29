@@ -1,0 +1,21 @@
+<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Axis lines -->
+  <line x1="5" y1="5" x2="5" y2="41" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round"/>
+  <line x1="5" y1="41" x2="44" y2="41" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round"/>
+  <!-- Area fill under trend -->
+  <path d="M7 34 L14 26 L21 29 L28 17 L35 21 L42 10 L42 41 L7 41 Z" fill="#EEF2FF" opacity="0.9"/>
+  <!-- Bars -->
+  <rect x="8" y="28" width="7" height="13" rx="2" fill="#4F46E5" opacity="0.75"/>
+  <rect x="19" y="21" width="7" height="20" rx="2" fill="#4F46E5" opacity="0.75"/>
+  <rect x="30" y="13" width="7" height="28" rx="2" fill="#4F46E5" opacity="0.75"/>
+  <!-- Bar top highlights -->
+  <rect x="8" y="28" width="7" height="3" rx="2" fill="#818CF8"/>
+  <rect x="19" y="21" width="7" height="3" rx="2" fill="#818CF8"/>
+  <rect x="30" y="13" width="7" height="3" rx="2" fill="#818CF8"/>
+  <!-- Trend line -->
+  <path d="M7 34 L14 26 L21 29 L28 17 L35 21 L42 10" stroke="#7C3AED" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Trend dots -->
+  <circle cx="7" cy="34" r="3" fill="#7C3AED"/>
+  <circle cx="28" cy="17" r="3" fill="#7C3AED"/>
+  <circle cx="42" cy="10" r="3" fill="#7C3AED"/>
+</svg>

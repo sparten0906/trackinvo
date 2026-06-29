@@ -1,0 +1,17 @@
+<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Grid -->
+  <line x1="5" y1="6" x2="5" y2="42" stroke="#E2E8F0" stroke-width="2" stroke-linecap="round"/>
+  <line x1="5" y1="42" x2="46" y2="42" stroke="#E2E8F0" stroke-width="2" stroke-linecap="round"/>
+  <line x1="5" y1="28" x2="46" y2="28" stroke="#D1FAE5" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <line x1="5" y1="14" x2="46" y2="14" stroke="#D1FAE5" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <!-- Area fill -->
+  <path d="M7 35 L18 26 L28 20 L38 10 L46 7 L46 42 L7 42 Z" fill="#DCFCE7" opacity="0.85"/>
+  <!-- Line -->
+  <path d="M7 35 L18 26 L28 20 L38 10 L46 7" stroke="#10B981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Arrow at tip -->
+  <path d="M42 4 L46 7 L43 11" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Dots -->
+  <circle cx="7" cy="35" r="3.5" fill="#10B981"/>
+  <circle cx="28" cy="20" r="3.5" fill="#10B981"/>
+  <circle cx="46" cy="7" r="3.5" fill="#10B981"/>
+</svg>

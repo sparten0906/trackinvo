@@ -1,0 +1,26 @@
+<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Bottom row: 3 boxes -->
+  <rect x="2" y="32" width="12" height="14" rx="2.5" fill="#4338CA"/>
+  <rect x="2" y="32" width="12" height="4" rx="2.5" fill="#6366F1"/>
+  <rect x="18" y="32" width="12" height="14" rx="2.5" fill="#4F46E5"/>
+  <rect x="18" y="32" width="12" height="4" rx="2.5" fill="#818CF8"/>
+  <rect x="34" y="32" width="12" height="14" rx="2.5" fill="#4338CA"/>
+  <rect x="34" y="32" width="12" height="4" rx="2.5" fill="#6366F1"/>
+  <!-- Tape strips on bottom row -->
+  <rect x="7.5" y="32" width="1.5" height="14" fill="#3730A3" opacity="0.3"/>
+  <rect x="23.5" y="32" width="1.5" height="14" fill="#3730A3" opacity="0.3"/>
+  <rect x="39.5" y="32" width="1.5" height="14" fill="#3730A3" opacity="0.3"/>
+  <!-- Middle row: 2 boxes (centered) -->
+  <rect x="10" y="17" width="12" height="13" rx="2.5" fill="#6366F1"/>
+  <rect x="10" y="17" width="12" height="4" rx="2.5" fill="#818CF8"/>
+  <rect x="26" y="17" width="12" height="13" rx="2.5" fill="#4F46E5"/>
+  <rect x="26" y="17" width="12" height="4" rx="2.5" fill="#A5B4FC"/>
+  <!-- Tape strips middle row -->
+  <rect x="15.5" y="17" width="1.5" height="13" fill="#3730A3" opacity="0.3"/>
+  <rect x="31.5" y="17" width="1.5" height="13" fill="#3730A3" opacity="0.3"/>
+  <!-- Top box (centered) -->
+  <rect x="18" y="3" width="12" height="12" rx="2.5" fill="#818CF8"/>
+  <rect x="18" y="3" width="12" height="4" rx="2.5" fill="#A5B4FC"/>
+  <!-- Tape strip top -->
+  <rect x="23.5" y="3" width="1.5" height="12" fill="#3730A3" opacity="0.3"/>
+</svg>

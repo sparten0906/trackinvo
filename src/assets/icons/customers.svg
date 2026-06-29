@@ -1,0 +1,10 @@
+<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background person (right, lighter blue) -->
+  <circle cx="32" cy="15" r="9" fill="#38BDF8"/>
+  <path d="M14 46 C14 37 20 32 32 32 C44 32 48 37 48 46Z" fill="#38BDF8"/>
+  <!-- Foreground person (left, deeper blue) -->
+  <circle cx="18" cy="15" r="10" fill="#0284C7"/>
+  <!-- Shirt collar hint -->
+  <path d="M18 24 L14 28 L22 28Z" fill="#0369A1"/>
+  <path d="M0 46 C0 36 6 30 18 30 C30 30 36 36 36 46Z" fill="#0284C7"/>
+</svg>

@@ -1,0 +1,15 @@
+<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Track circle -->
+  <circle cx="24" cy="24" r="19" stroke="#CCFBF1" stroke-width="4" fill="none"/>
+  <!-- Top arc (clockwise, teal) -->
+  <path d="M10 13 C14 5 30 3 38 11" stroke="#0D9488" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <!-- Top arc arrow head -->
+  <path d="M35 6 L38 11 L33 13" stroke="#0D9488" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Bottom arc (counter-clockwise, cyan) -->
+  <path d="M38 35 C34 43 18 45 10 37" stroke="#0891B2" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <!-- Bottom arc arrow head -->
+  <path d="M13 42 L10 37 L15 35" stroke="#0891B2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Center -->
+  <circle cx="24" cy="24" r="6" fill="#0D9488"/>
+  <circle cx="24" cy="24" r="3" fill="#CCFBF1"/>
+</svg>

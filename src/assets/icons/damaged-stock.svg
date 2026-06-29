@@ -1,0 +1,12 @@
+<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer glow/shadow triangle -->
+  <path d="M25.8 5.5 L46.3 41.5 C47.3 43.3 46 45.5 44 45.5 L4 45.5 C2 45.5 0.7 43.3 1.7 41.5 L22.2 5.5 C23.2 3.7 25.8 3.7 25.8 5.5 Z" fill="#FDE68A"/>
+  <!-- Main warning triangle -->
+  <path d="M24 8.5 L43.5 43 L4.5 43 Z" fill="#F59E0B"/>
+  <!-- Inner lighter triangle -->
+  <path d="M24 14 L38.5 41 L9.5 41 Z" fill="#FCD34D"/>
+  <!-- Exclamation bar -->
+  <rect x="21.5" y="21" width="5" height="12" rx="2.5" fill="#92400E"/>
+  <!-- Exclamation dot -->
+  <circle cx="24" cy="37" r="3" fill="#92400E"/>
+</svg>
