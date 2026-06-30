@@ -14,7 +14,7 @@ import { useApp } from '../context/AppContext';
 import Modal from '../components/ui/Modal';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { FormField, Input, Select, Textarea } from '../components/forms/FormField';
-import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, generateId, today, validateSupplier } from '../utils/helpers';
+import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, formatTableDateTime, generateId, today, validateSupplier } from '../utils/helpers';
 import toast from 'react-hot-toast';
 
 /* ── Status config ─────────────────────────────────────────────────────── */
@@ -1405,7 +1405,7 @@ export default function PurchaseOrders() {
                 {[
                   ['Type', 'left'],
                   ['Reference', 'left'],
-                  ['Date', 'left'],
+                  ['Order Date', 'left'],
                   ['Supplier', 'left'],
                   ['Items', 'right'],
                   ['Total Value', 'right'],
@@ -1441,8 +1441,7 @@ export default function PurchaseOrders() {
                     </td>
                     <td style={{ padding: '11px 12px', fontWeight: 700, color: 'var(--brand)', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{ref}</td>
                     <td style={{ padding: '11px 12px', whiteSpace: 'nowrap' }}>
-                      <div style={{ color: 'var(--text-tertiary)' }}>{formatDate(date)}</div>
-                      {item.createdAt && <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)', marginTop: 1 }}>{formatDateTime(item.createdAt)}</div>}
+                      {(() => { const dt = formatTableDateTime(isGP ? item.date : item.orderDate, item.createdAt); return (<><div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{dt.date}</div>{dt.time && <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1 }}>{dt.time}</div>}</>); })()}
                     </td>
                     <td style={{ padding: '11px 12px', color: 'var(--text-secondary)', maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.supplierName || '—'}</td>
                     <td style={{ padding: '11px 12px', textAlign: 'right', color: 'var(--text-secondary)' }}>{(item.items || []).length}</td>
@@ -1545,12 +1544,6 @@ export default function PurchaseOrders() {
                         <td style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{v}</td>
                       </tr>
                     ))}
-                    {selectedPO.createdAt && (
-                      <tr>
-                        <td style={{ color: 'var(--text-tertiary)', paddingRight: 10, paddingBottom: 3, whiteSpace: 'nowrap' }}>Created</td>
-                        <td style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{formatDateTime(selectedPO.createdAt)}</td>
-                      </tr>
-                    )}
                     {selectedPO.approvedAt && (
                       <tr>
                         <td style={{ color: 'var(--text-tertiary)', paddingRight: 10, paddingBottom: 3, whiteSpace: 'nowrap' }}>Approved</td>
@@ -1682,6 +1675,19 @@ export default function PurchaseOrders() {
             {selectedPO.notes && (
               <div style={{ background: 'var(--brand-faint)', border: '1px solid var(--brand-light)', borderRadius: 9, padding: '9px 12px', fontSize: 12.5, color: 'var(--text-secondary)' }}>
                 <strong style={{ color: 'var(--brand)' }}>Notes:</strong> {selectedPO.notes}
+              </div>
+            )}
+
+            {/* Audit section */}
+            {selectedPO.createdAt && (
+              <div style={{ marginTop: 4, paddingTop: 12, borderTop: '1px solid var(--border)' }}>
+                <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>Audit</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px' }}>
+                  <div>
+                    <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>Created On</div>
+                    <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)' }}>{formatDateTime(selectedPO.createdAt)}</div>
+                  </div>
+                </div>
               </div>
             )}
 

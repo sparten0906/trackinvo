@@ -36,12 +36,23 @@ const _parts = (value, options, tz) => {
 
 const _ampm = (p) => (p.dayPeriod || '').toUpperCase();
 
-// ─── Public formatters ────────────────────────────────────────────────────────
+// ─── Type detection ────────────────────────────────────────────────────────────
+
+/**
+ * Returns true if value contains a time component (is not a pure YYYY-MM-DD date).
+ * Use to decide whether to show time or just date.
+ */
+export const hasTime = (value) => {
+  if (!value) return false;
+  return !_isDateOnly(value);
+};
+
+// ─── Core formatters ──────────────────────────────────────────────────────────
 
 /**
  * "15 Jul 2026"
  * Safe for both ISO timestamps and pure YYYY-MM-DD strings.
- * Date-only strings are formatted without timezone conversion to avoid day-shift bugs.
+ * Date-only strings are formatted without timezone conversion to prevent day-shift bugs.
  */
 export const formatDate = (value, tz) => {
   if (!value) return '—';
@@ -55,8 +66,8 @@ export const formatDate = (value, tz) => {
 
 /**
  * "15 Jul 2026"
- * Explicit alias for date-only fields — always treats value as a local date string.
- * Use for: due date, PO date, invoice date, expected delivery date.
+ * Explicit alias for fields that are always date-only strings (due date, PO date, etc.)
+ * Parses components directly — zero timezone math.
  */
 export const formatDateOnly = (value) => {
   if (!value) return '—';
@@ -78,11 +89,11 @@ export const formatTime = (value, tz) => {
 /**
  * "15 Jul 2026 • 10:45 AM"
  * Primary display format for all system timestamps (createdAt, updatedAt, etc.).
- * For pure YYYY-MM-DD values, falls back to date-only display (no fake time).
+ * For pure YYYY-MM-DD values, returns date only — no fake time added.
  */
 export const formatDateTime = (value, tz) => {
   if (!value) return '—';
-  if (_isDateOnly(value)) return formatDate(value); // No fake time for date-only fields
+  if (_isDateOnly(value)) return formatDate(value);
   const p = _parts(value, {
     day: 'numeric', month: 'short', year: 'numeric',
     hour: 'numeric', minute: '2-digit', hour12: true,
@@ -93,7 +104,7 @@ export const formatDateTime = (value, tz) => {
 
 /**
  * "15 Jul • 10:45 AM" — compact, omits year.
- * Use in tight spaces like timeline pills or compact cards.
+ * Use in tight spaces: timeline pills, compact cards, tooltips.
  */
 export const formatDateTimeShort = (value, tz) => {
   if (!value) return '—';
@@ -108,8 +119,8 @@ export const formatDateTimeShort = (value, tz) => {
 
 /**
  * { date: "15 Jul 2026", time: "10:45 AM" }
- * For stacked two-line display in table cells.
- * For date-only values, time is empty string.
+ * For stacked two-line display in table cells and mobile views.
+ * Returns empty time string for date-only values — caller skips the time row.
  */
 export const formatDateTimeSplit = (value, tz) => {
   if (!value) return { date: '—', time: '' };
@@ -125,14 +136,70 @@ export const formatDateTimeSplit = (value, tz) => {
   };
 };
 
+// ─── Business date helpers ─────────────────────────────────────────────────────
+
+/**
+ * Smart formatter for business date fields that may or may not have a time component.
+ *
+ * Priority: primaryValue (e.g. order_date_time || order_date) → fallbackValue (e.g. created_at)
+ *
+ * - If primary has time → formatDateTime(primary)
+ * - If primary is date-only → formatDate(primary)  [no fake time]
+ * - If primary is empty → use fallback with same logic
+ * - If fallback has time → formatDateTime(fallback)
+ * - If all empty → "—"
+ */
+export const formatBusinessDateTime = (primaryValue, fallbackValue) => {
+  const val = primaryValue || fallbackValue;
+  if (!val) return '—';
+  return hasTime(val) ? formatDateTime(val) : formatDate(val);
+};
+
+/**
+ * Same as formatBusinessDateTime but returns { date, time } for stacked two-line display.
+ * time is '' when the selected value is date-only.
+ */
+export const formatBusinessDateTimeSplit = (primaryValue, fallbackValue) => {
+  const val = primaryValue || fallbackValue;
+  if (!val) return { date: '—', time: '' };
+  return formatDateTimeSplit(val);
+};
+
+/**
+ * Table cell formatter: picks the best available timestamp value and returns { date, time }.
+ * Optimised for transaction tables — always shows time when a timestamp is available.
+ *
+ * @param {string} businessDate  — YYYY-MM-DD user-selected business date (invoice date, PO date, etc.)
+ * @param {string} createdAt     — ISO timestamp when the record was saved
+ */
+export const formatTableDateTime = (businessDate, createdAt) => {
+  // If the business date is already a full timestamp, use it
+  if (businessDate && hasTime(businessDate)) return formatDateTimeSplit(businessDate);
+  // Business date is date-only: show it as the date, use createdAt for the time line
+  if (businessDate && _isDateOnly(businessDate)) {
+    const datePart = formatDate(businessDate);
+    const timePart = createdAt ? formatTime(createdAt) : '';
+    return { date: datePart, time: timePart };
+  }
+  // No business date: fall back to createdAt fully
+  return formatDateTimeSplit(createdAt);
+};
+
+/**
+ * Mobile two-line format — alias for formatDateTimeSplit.
+ * Caller renders date on line 1, time on line 2 (or hides time if empty).
+ */
+export const formatMobileDateTime = (value, tz) => formatDateTimeSplit(value, tz);
+
+// ─── Input / filter helpers ───────────────────────────────────────────────────
+
 /**
  * "2026-07-15" — YYYY-MM-DD for <input type="date">.
  * Safe for both ISO timestamps and pure YYYY-MM-DD strings.
- * Date-only strings are returned as-is (no timezone conversion).
  */
 export const formatDateForInput = (value, tz) => {
   if (!value) return '';
-  if (_isDateOnly(value)) return String(value).slice(0, 10); // Already correct, no conversion needed
+  if (_isDateOnly(value)) return String(value).slice(0, 10);
   const d = _parse(value);
   if (!d) return '';
   const p = Object.fromEntries(
@@ -149,7 +216,6 @@ export const getTodayLocalDate = (tz) => formatDateForInput(new Date(), tz);
 
 // ─── Local-day range helpers ──────────────────────────────────────────────────
 
-// Timezone offset in milliseconds (positive = east of UTC) at moment d.
 const _offsetMs = (tz, d) => {
   const opts = {
     year: 'numeric', month: '2-digit', day: '2-digit',
@@ -168,7 +234,7 @@ const _offsetMs = (tz, d) => {
 };
 
 /**
- * Returns UTC ISO string for 00:00:00.000 local time on localDateStr ("YYYY-MM-DD").
+ * UTC ISO string for 00:00:00.000 local time on localDateStr ("YYYY-MM-DD").
  * Example (IST +5:30): startOfLocalDay("2026-07-15") → "2026-07-14T18:30:00.000Z"
  */
 export const startOfLocalDay = (localDateStr, tz) => {
@@ -181,8 +247,7 @@ export const startOfLocalDay = (localDateStr, tz) => {
 };
 
 /**
- * Returns UTC ISO string for 23:59:59.999 local time on localDateStr ("YYYY-MM-DD").
- * Example (IST +5:30): endOfLocalDay("2026-07-15") → "2026-07-15T18:29:59.999Z"
+ * UTC ISO string for 23:59:59.999 local time on localDateStr ("YYYY-MM-DD").
  */
 export const endOfLocalDay = (localDateStr, tz) => {
   const start = startOfLocalDay(localDateStr, tz);
@@ -191,9 +256,7 @@ export const endOfLocalDay = (localDateStr, tz) => {
 };
 
 /**
- * Converts a UI date-range pair (YYYY-MM-DD strings) to UTC ISO boundaries.
- * Use for Supabase .gte() / .lte() queries.
- *
+ * Converts a UI date-range pair (YYYY-MM-DD) to UTC ISO boundaries for Supabase queries.
  * @returns {{ from: string|null, to: string|null }}
  */
 export const toLocalDateRange = (fromDate, toDate) => ({
@@ -202,11 +265,8 @@ export const toLocalDateRange = (fromDate, toDate) => ({
 });
 
 /**
- * Returns true if a record's date falls within the given local date range.
- *
- * @param {string} recordDate    — ISO timestamp or YYYY-MM-DD from the record
- * @param {string} fromLocalDate — YYYY-MM-DD filter start (inclusive), or null/''
- * @param {string} toLocalDate   — YYYY-MM-DD filter end   (inclusive), or null/''
+ * Returns true if a record's date falls within the local date range.
+ * Handles both ISO timestamps and YYYY-MM-DD strings.
  */
 export const isWithinLocalDateRange = (recordDate, fromLocalDate, toLocalDate, tz) => {
   if (!recordDate) return false;

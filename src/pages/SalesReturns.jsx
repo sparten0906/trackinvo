@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit } from '../utils/helpers';
+import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, formatTableDateTime } from '../utils/helpers';
 
 // ─── Config ────────────────────────────────────────────────────────────────────
 
@@ -134,7 +134,6 @@ function DetailModal({ ret, sym, onClose }) {
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px 14px' }}>
                 <span style={{ fontSize: 12.5, color: 'var(--text-secondary)', fontWeight: 600 }}>{ret.customerName || '—'}</span>
                 <span style={{ fontSize: 12.5, color: 'var(--text-tertiary)' }}>Invoice <span style={{ fontFamily: 'Menlo, Consolas, monospace', fontWeight: 700, color: 'var(--brand)' }}>{ret.invoiceNumber || '—'}</span></span>
-                <span style={{ fontSize: 12.5, color: 'var(--text-tertiary)' }}>{ret.createdAt ? formatDateTime(ret.createdAt) : formatDate(ret.date)}</span>
               </div>
             </div>
             <button
@@ -186,12 +185,12 @@ function DetailModal({ ret, sym, onClose }) {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
                   {[
-                    ['Return No.',  ret.returnNumber || '—'],
-                    ['Invoice',     ret.invoiceNumber || '—'],
-                    ['Customer',    ret.customerName  || '—'],
-                    ['Date',        ret.createdAt ? formatDateTime(ret.createdAt) : formatDate(ret.date)],
-                    ['Refund Via',  REFUND_LABELS[ret.refundMode || ret.refundMethod] || '—'],
-                    ['Reason',      ret.reason || '—'],
+                    ['Return No.',   ret.returnNumber || '—'],
+                    ['Invoice',      ret.invoiceNumber || '—'],
+                    ['Customer',     ret.customerName  || '—'],
+                    ['Return Date',  formatDate(ret.date)],
+                    ['Refund Via',   REFUND_LABELS[ret.refundMode || ret.refundMethod] || '—'],
+                    ['Reason',       ret.reason || '—'],
                   ].map(([k, v], i) => (
                     <div key={k} style={{ padding: '10px 14px', borderBottom: i < 4 ? '1px solid var(--border-subtle)' : 'none', borderRight: i % 2 === 0 ? '1px solid var(--border-subtle)' : 'none' }}>
                       <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)', fontWeight: 600, marginBottom: 3 }}>{k}</div>
@@ -226,6 +225,17 @@ function DetailModal({ ret, sym, onClose }) {
                   <p style={{ fontSize: 13.5, color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>{ret.notes}</p>
                 </div>
               )}
+
+              {/* Audit section */}
+              <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid var(--border)' }}>
+                <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>Audit</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px' }}>
+                  <div>
+                    <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>Created On</div>
+                    <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)' }}>{formatDateTime(ret.createdAt)}</div>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
@@ -452,7 +462,7 @@ export default function SalesReturns() {
               <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 900 }}>
                 <thead>
                   <tr style={{ background: 'var(--canvas)' }}>
-                    {['Return No.', 'Invoice', 'Customer', 'Date', 'Items', 'Refund', 'Method', 'Status', 'Type', ''].map((h, i) => (
+                    {['Return No.', 'Invoice', 'Customer', 'Return Date', 'Items', 'Refund', 'Method', 'Status', 'Type', ''].map((h, i) => (
                       <th key={h + i} style={{ padding: '9px 16px', textAlign: 'left', fontSize: 10.5, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid var(--border)', whiteSpace: 'nowrap' }}>
                         {h}
                       </th>
@@ -480,8 +490,8 @@ export default function SalesReturns() {
                         <td style={{ padding: '11px 16px', maxWidth: 160 }}>
                           <span style={{ fontSize: 13, color: 'var(--text-primary)', fontWeight: 500, display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ret.customerName || '—'}</span>
                         </td>
-                        <td style={{ padding: '11px 16px', whiteSpace: 'nowrap' }}>
-                          {ret.createdAt ? (() => { const { date, time } = formatDateTimeSplit(ret.createdAt); return <><div style={{ fontSize: 12, color: 'var(--text-primary)', fontWeight: 600 }}>{date}</div><div style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>{time}</div></>; })() : <span style={{ fontSize: 12.5, color: 'var(--text-tertiary)' }}>{formatDate(ret.date)}</span>}
+                        <td style={{ padding: '11px 16px' }}>
+                          {(() => { const dt = formatTableDateTime(ret.date || ret.returnDate, ret.createdAt); return <><div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{dt.date}</div>{dt.time && <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1 }}>{dt.time}</div>}</>; })()}
                         </td>
                         <td style={{ padding: '11px 16px', fontSize: 13, color: 'var(--text-secondary)', textAlign: 'center' }}>
                           {(ret.items || []).length}

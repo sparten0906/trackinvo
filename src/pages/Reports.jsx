@@ -6,7 +6,7 @@ import {
   Activity, Wallet, Layers, ChevronRight, ChevronLeft, ArrowUpRight,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { formatCurrency, formatDate, formatDateTime, filterByDateRange, isLowStock, sumField } from '../utils/helpers';
+import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, filterByDateRange, isLowStock, sumField } from '../utils/helpers';
 import {
   exportSales, exportPurchases, exportProfit, exportTax, exportPayments,
   exportSalesReturns, exportPurchaseReturns, exportStock, exportStockMovements,
@@ -1101,7 +1101,9 @@ export default function Reports() {
                     const meta = STOCK_TYPE_META[t.transactionType] || STOCK_TYPE_META.MANUAL_ADJUSTMENT;
                     return (
                       <tr key={t.id} className="tr">
-                        <td className="td text-xs" style={{ color: 'var(--text-secondary)' }}>{formatDateTime(t.createdAt)}</td>
+                        <td className="td">
+                          {(() => { const dt = formatDateTimeSplit(t.createdAt); return (<><div style={{fontSize:12.5,fontWeight:500,color:'var(--text-primary)',whiteSpace:'nowrap'}}>{dt.date}</div>{dt.time && <div style={{fontSize:11,color:'var(--text-tertiary)',marginTop:1}}>{dt.time}</div>}</>); })()}
+                        </td>
                         <td className="td">
                           <p className="font-medium" style={{ fontSize: 13 }}>{t.productName}</p>
                           <p className="font-mono text-xs" style={{ color: 'var(--text-tertiary)' }}>{t.sku}</p>
@@ -1136,7 +1138,7 @@ export default function Reports() {
                       <span className="badge badge-neutral" style={{ color: meta.color }}>{meta.label}</span>
                     </div>
                     <div className="flex gap-4 text-xs" style={{ color: 'var(--text-tertiary)' }}>
-                      <span>{formatDateTime(t.createdAt)}</span>
+                      <span>{formatDateTimeSplit(t.createdAt).date}{formatDateTimeSplit(t.createdAt).time ? ` • ${formatDateTimeSplit(t.createdAt).time}` : ''}</span>
                       {t.quantityIn  > 0 && <span style={{ color: 'var(--emerald)' }}>+{t.quantityIn}</span>}
                       {t.quantityOut > 0 && <span style={{ color: 'var(--error)' }}>−{t.quantityOut}</span>}
                       <span>Balance: <span className="num font-semibold" style={{ color: 'var(--text-primary)' }}>{t.newStock}</span></span>

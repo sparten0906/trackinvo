@@ -6,7 +6,7 @@ import {
   ArrowUpRight, ChevronDown, ChevronUp, Calendar, Check,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { formatCurrency, formatDate, formatDateTimeSplit, today } from '../utils/helpers';
+import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, today } from '../utils/helpers';
 import Modal from '../components/ui/Modal';
 import PayableReceiptViewer from '../components/payables/PayableReceiptViewer';
 
@@ -199,7 +199,7 @@ function PaymentHistory({ payments, sym, onDelete, onReceipt }) {
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
               <span style={{ fontWeight: 700, fontSize: 13.5, color: 'var(--text)' }}>{formatCurrency(pmt.paymentAmount, sym)}</span>
               <PayModeChip mode={pmt.paymentMode} />
-              <span style={{ fontSize: 11.5, color: 'var(--text-secondary)' }}>{formatDate(pmt.paymentDate)}</span>
+              <span style={{ fontSize: 11.5, color: 'var(--text-secondary)' }}>{formatDateTime(pmt.payment_date || pmt.paymentDate)}</span>
             </div>
             {pmt.transactionReference && <div style={{ fontSize: 11.5, color: 'var(--text-secondary)', marginTop: 2 }}>Ref: {pmt.transactionReference}</div>}
             {pmt.notes && <div style={{ fontSize: 11.5, color: 'var(--text-secondary)', marginTop: 1 }}>{pmt.notes}</div>}
@@ -760,8 +760,8 @@ export default function Payables() {
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                 <thead>
                   <tr style={{ background: 'var(--surface)', borderBottom: '2px solid var(--border)' }}>
-                    {['Type', 'Name / Reference', 'Vendor / Supplier', 'Date', 'Due Date', 'Total', 'Paid', 'Outstanding', 'Status', 'Last Payment', ''].map((h, i) => (
-                      <th key={i} style={{ padding: '9px 10px', textAlign: i >= 5 && i <= 7 ? 'right' : 'left', fontSize: 10.5, fontWeight: 700, color: 'var(--text-secondary)', letterSpacing: '0.05em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{h}</th>
+                    {['Type', 'Name / Reference', 'Vendor / Supplier', 'Due Date', 'Total', 'Paid', 'Outstanding', 'Status', 'Payment', ''].map((h, i) => (
+                      <th key={i} style={{ padding: '9px 10px', textAlign: i >= 4 && i <= 6 ? 'right' : 'left', fontSize: 10.5, fontWeight: 700, color: 'var(--text-secondary)', letterSpacing: '0.05em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -775,11 +775,8 @@ export default function Payables() {
                       <td style={{ padding: '10px 10px' }}><TypeBadge type={row.rowType} /></td>
                       <td style={{ padding: '10px 10px', fontWeight: 600, color: 'var(--text)', maxWidth: 175, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={row.displayName}>{row.displayName}</td>
                       <td style={{ padding: '10px 10px', color: 'var(--text-secondary)', maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.vendor !== '—' ? row.vendor : <span style={{ color: 'var(--border)' }}>—</span>}</td>
-                      <td style={{ padding: '10px 10px', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
-                        {(() => { const { date, time } = formatDateTimeSplit(row.date); return <><div style={{ fontSize: 12, color: 'var(--text-primary)', fontWeight: 600 }}>{date}</div>{time && <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>{time}</div>}</>; })()}
-                      </td>
                       <td style={{ padding: '10px 10px', whiteSpace: 'nowrap', color: row.dueDate && row.dueDate < todayStr && row.balance > 0 ? '#DC2626' : 'var(--text-secondary)' }}>
-                        {row.dueDate ? formatDate(row.dueDate) : <span style={{ color: 'var(--border)' }}>—</span>}
+                        {row.dueDate ? <div style={{ fontSize: 12.5, fontWeight: 500, color: row.dueDate && row.dueDate < todayStr && row.balance > 0 ? '#DC2626' : 'var(--text-primary)', whiteSpace: 'nowrap' }}>{formatDate(row.dueDate)}</div> : <span style={{ color: 'var(--border)' }}>—</span>}
                       </td>
                       <td style={{ padding: '10px 10px', textAlign: 'right', fontWeight: 600, color: 'var(--text)', whiteSpace: 'nowrap' }}>{formatCurrency(row.totalAmount, sym)}</td>
                       <td style={{ padding: '10px 10px', textAlign: 'right', fontWeight: 600, color: row.paidAmount > 0 ? '#16A34A' : 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
@@ -789,7 +786,7 @@ export default function Payables() {
                       <td style={{ padding: '10px 10px' }}><StatusBadge status={row.status} /></td>
                       <td style={{ padding: '10px 10px', whiteSpace: 'nowrap', fontSize: 12 }}>
                         {row.lastPaymentDate
-                          ? <><div style={{ color: 'var(--text-secondary)' }}>{formatDate(row.lastPaymentDate)}</div><PayModeChip mode={row.lastPaymentMode} /></>
+                          ? (() => { const dt = formatDateTimeSplit(row.lastPaymentDate || (row.payments[0] && (row.payments[0].payment_date || row.payments[0].date))); return <><div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{dt.date}</div>{dt.time && <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1 }}>{dt.time}</div>}<PayModeChip mode={row.lastPaymentMode} /></>; })()
                           : <span style={{ color: 'var(--border)' }}>—</span>}
                       </td>
                       <td style={{ padding: '10px 10px' }} onClick={e => e.stopPropagation()}>
@@ -1004,6 +1001,19 @@ export default function Payables() {
             ) : (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, color: '#16A34A', fontWeight: 700, fontSize: 14 }}>
                 <CheckCircle2 size={16} /> Fully Paid
+              </div>
+            )}
+
+            {/* Audit section */}
+            {selectedRow.source?.createdAt && (
+              <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid var(--border)' }}>
+                <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>Audit</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px' }}>
+                  <div>
+                    <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>Created On</div>
+                    <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)' }}>{formatDateTime(selectedRow.source.createdAt)}</div>
+                  </div>
+                </div>
               </div>
             )}
 

@@ -10,7 +10,7 @@ import InvoiceViewer from '../components/invoice/InvoiceViewer';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import Modal from '../components/ui/Modal';
 import { FormField, Input, Select, Textarea } from '../components/forms/FormField';
-import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, today } from '../utils/helpers';
+import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, formatTableDateTime, today } from '../utils/helpers';
 
 const PAY_METHODS = [
   { value: 'cash',          label: 'Cash' },
@@ -356,7 +356,7 @@ export default function Invoices() {
                 <tr style={{ background: 'var(--canvas)', position: 'sticky', top: 0, zIndex: 10 }}>
                   {[
                     ['Invoice #', 'left'],
-                    ['Date', 'left'],
+                    ['Invoice Date', 'left'],
                     ['Customer', 'left'],
                     ['Items', 'right'],
                     ['Method', 'left'],
@@ -387,8 +387,10 @@ export default function Invoices() {
                     >
                       <td style={{ padding: '10px 12px', fontWeight: 700, color: isSel ? 'var(--brand)' : 'var(--text-primary)', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{inv.invoiceNumber}</td>
                       <td style={{ padding: '10px 12px', whiteSpace: 'nowrap' }}>
-                        <div style={{ fontSize: 12.5, color: 'var(--text-tertiary)', fontWeight: 500 }}>{formatDate(inv.date)}</div>
-                        {inv.createdAt && (() => { const { date, time } = formatDateTimeSplit(inv.createdAt); return <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)', opacity: 0.7 }}>{time}</div>; })()}
+                        {(() => { const dt = formatTableDateTime(inv.date, inv.createdAt); return (<>
+                          <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{dt.date}</div>
+                          {dt.time && <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1 }}>{dt.time}</div>}
+                        </>); })()}
                       </td>
                       <td style={{ padding: '10px 12px', color: 'var(--text-secondary)', maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cust?.name || '—'}</td>
                       <td style={{ padding: '10px 12px', textAlign: 'right', color: 'var(--text-secondary)' }}>{(inv.items || []).length}</td>
@@ -519,12 +521,6 @@ export default function Invoices() {
                         <span style={{ color: 'var(--text-tertiary)' }}>Method</span>
                         <span style={{ fontWeight: 600 }}>{PAY_METHODS.find(m => m.value === selInvoice.paymentMethod)?.label || selInvoice.paymentMethod || '—'}</span>
                       </div>
-                      {selInvoice.createdAt && (
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
-                          <span style={{ color: 'var(--text-tertiary)' }}>Created</span>
-                          <span style={{ fontWeight: 600 }}>{formatDateTime(selInvoice.createdAt)}</span>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -628,6 +624,19 @@ export default function Invoices() {
                   <div style={{ marginBottom: 4, padding: '10px 14px', background: 'var(--canvas)', borderRadius: 9, border: '1px solid var(--border)' }}>
                     <div style={{ fontSize: 9.5, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>Notes</div>
                     <div style={{ fontSize: 12.5, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{selInvoice.notes}</div>
+                  </div>
+                )}
+
+                {/* Audit section */}
+                {selInvoice.createdAt && (
+                  <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid var(--border)' }}>
+                    <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>Audit</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px' }}>
+                      <div>
+                        <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>Created On</div>
+                        <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)' }}>{formatDateTime(selInvoice.createdAt)}</div>
+                      </div>
+                    </div>
                   </div>
                 )}
               </>

@@ -1,12 +1,17 @@
 // All date/time formatting is delegated to the central dateTime utility.
 // Re-exported here so existing imports from helpers.js continue to work.
 import {
+  hasTime as _hasTime,
   formatDate as _formatDate,
   formatDateOnly as _formatDateOnly,
   formatDateTime as _formatDateTime,
   formatDateTimeShort as _formatDateTimeShort,
   formatDateTimeSplit as _formatDateTimeSplit,
   formatTime as _formatTime,
+  formatBusinessDateTime as _formatBusinessDateTime,
+  formatBusinessDateTimeSplit as _formatBusinessDateTimeSplit,
+  formatTableDateTime as _formatTableDateTime,
+  formatMobileDateTime as _formatMobileDateTime,
   formatDateForInput as _fmtDateForInput,
   getTodayLocalDate as _getTodayLocalDate,
   startOfLocalDay as _startOfLocalDay,
@@ -17,20 +22,25 @@ import {
   getAppTimezone as _getAppTimezone,
 } from './dateTime.js';
 
-export const formatDate             = _formatDate;
-export const formatDateOnly         = _formatDateOnly;
-export const formatDateTime         = _formatDateTime;
-export const formatDateTimeShort    = _formatDateTimeShort;
-export const formatDateTimeSplit    = _formatDateTimeSplit;
-export const formatTime             = _formatTime;
-export const formatDateForInput     = _fmtDateForInput;
-export const getTodayLocalDate      = _getTodayLocalDate;
-export const startOfLocalDay        = _startOfLocalDay;
-export const endOfLocalDay          = _endOfLocalDay;
-export const toLocalDateRange       = _toLocalDateRange;
-export const isWithinLocalDateRange = _isWithinLocalDateRange;
-export const setAppTimezone         = _setAppTimezone;
-export const getAppTimezone         = _getAppTimezone;
+export const hasTime                    = _hasTime;
+export const formatDate                 = _formatDate;
+export const formatDateOnly             = _formatDateOnly;
+export const formatDateTime             = _formatDateTime;
+export const formatDateTimeShort        = _formatDateTimeShort;
+export const formatDateTimeSplit        = _formatDateTimeSplit;
+export const formatTime                 = _formatTime;
+export const formatBusinessDateTime     = _formatBusinessDateTime;
+export const formatBusinessDateTimeSplit = _formatBusinessDateTimeSplit;
+export const formatTableDateTime        = _formatTableDateTime;
+export const formatMobileDateTime       = _formatMobileDateTime;
+export const formatDateForInput         = _fmtDateForInput;
+export const getTodayLocalDate          = _getTodayLocalDate;
+export const startOfLocalDay            = _startOfLocalDay;
+export const endOfLocalDay              = _endOfLocalDay;
+export const toLocalDateRange           = _toLocalDateRange;
+export const isWithinLocalDateRange     = _isWithinLocalDateRange;
+export const setAppTimezone             = _setAppTimezone;
+export const getAppTimezone             = _getAppTimezone;
 
 // ─── FORMATTING ───────────────────────────────────────────────────────────────
 export const formatCurrency = (amount, symbol = '$') =>

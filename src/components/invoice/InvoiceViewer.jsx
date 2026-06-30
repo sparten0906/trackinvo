@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { CheckCircle2, Plus, X, Printer, Receipt } from 'lucide-react';
-import { formatCurrency, formatDate, formatDateTime } from '../../utils/helpers';
+import { formatCurrency, formatDate } from '../../utils/helpers';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import toast from 'react-hot-toast';
@@ -44,7 +44,7 @@ function amountInWords(amount) {
 // A4 width (794px). Uses table + float only — html2canvas 1.4.1 safe (no flex/grid/gap).
 export function InvoiceDocument({ invoice, settings, sym, customer }) {
   const {
-    invoiceNumber, customerName, date, dueDate, createdAt, items = [],
+    invoiceNumber, customerName, date, dueDate, items = [],
     subtotal = 0, itemDiscounts = 0, invoiceDiscount = 0,
     taxAmount = 0, grandTotal = 0,
     paidAmount = 0, balanceAmount = 0,
@@ -58,8 +58,6 @@ export function InvoiceDocument({ invoice, settings, sym, customer }) {
 
   const isPaid    = paymentStatus === 'paid';
   const isPartial = paymentStatus === 'partial';
-
-  const createdAtFormatted = createdAt ? formatDateTime(createdAt) : null;
 
   const badgeBg    = isPaid ? '#DCFCE7' : isPartial ? '#FEF9C3' : '#FEE2E2';
   const badgeColor = isPaid ? '#166534' : isPartial ? '#92400E' : '#991B1B';
@@ -197,12 +195,6 @@ export function InvoiceDocument({ invoice, settings, sym, customer }) {
                       <td style={metaL}>Invoice Date</td>
                       <td style={metaV}>{formatDate(date)}</td>
                     </tr>
-                    {createdAtFormatted && (
-                      <tr>
-                        <td style={metaL}>Created</td>
-                        <td style={metaV}>{createdAtFormatted}</td>
-                      </tr>
-                    )}
                     {dueDate && (
                       <tr>
                         <td style={metaL}>Due Date</td>

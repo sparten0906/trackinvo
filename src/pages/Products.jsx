@@ -290,6 +290,26 @@ export default function Products() {
       <FormField label="Description">
         <Textarea value={form.description} onChange={(e) => handleChange('description', e.target.value)} placeholder="Optional notes about this product..." />
       </FormField>
+
+      {editing && (form.createdAt || form.updatedAt) && (
+        <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid var(--border)' }}>
+          <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>Audit</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px' }}>
+            {form.createdAt && (
+              <div>
+                <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>Created On</div>
+                <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)' }}>{formatDateTime(form.createdAt)}</div>
+              </div>
+            )}
+            {form.updatedAt && (
+              <div>
+                <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>Updated On</div>
+                <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)' }}>{formatDateTime(form.updatedAt)}</div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 

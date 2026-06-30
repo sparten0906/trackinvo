@@ -187,7 +187,7 @@ export default function DamagedStock() {
               <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 860 }}>
                 <thead>
                   <tr style={{ background: 'var(--canvas)' }}>
-                    {['Damage No', 'Date', 'Product', 'SKU', 'Qty', 'Damage Type', 'Source', 'Status', 'Reason', ''].map((h, i) => (
+                    {['Damage No', 'Reported Date', 'Product', 'SKU', 'Qty', 'Damage Type', 'Source', 'Status', 'Reason', ''].map((h, i) => (
                       <th key={h || i} style={{ padding: '9px 14px', textAlign: i > 3 ? 'center' : 'left', fontSize: 10, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap', borderBottom: '1.5px solid var(--border)' }}>{h}</th>
                     ))}
                   </tr>
@@ -200,7 +200,7 @@ export default function DamagedStock() {
                       onMouseLeave={e => e.currentTarget.style.background = ''}>
                       <td style={{ padding: '10px 14px', fontWeight: 700, color: '#D97706', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{rec.damageNumber}</td>
                       <td style={{ padding: '10px 14px', whiteSpace: 'nowrap' }}>
-                        {(() => { const { date, time } = formatDateTimeSplit(rec.reportedDate || rec.createdAt); return (<><div style={{ fontSize: 12, color: 'var(--text-primary)', fontWeight: 600 }}>{date}</div><div style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>{time}</div></>); })()}
+                        {(() => { const { date, time } = formatDateTimeSplit(rec.reportedDate || rec.createdAt); return (<><div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{date}</div>{time && <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1 }}>{time}</div>}</>); })()}
                       </td>
                       <td style={{ padding: '10px 14px', fontWeight: 600, color: 'var(--text-primary)', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{rec.productName}</td>
                       <td style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontFamily: 'monospace', fontSize: 11.5, whiteSpace: 'nowrap' }}>{rec.sku || '—'}</td>
@@ -304,6 +304,17 @@ export default function DamagedStock() {
                 <XCircle size={13} color="#DC2626" style={{ flexShrink: 0, marginTop: 1 }} />
                 <div style={{ fontSize: 12, color: '#991B1B' }}>
                   The supplier <strong>rejected this return</strong> — goods are back in damaged stock and must be resolved separately.
+                </div>
+              </div>
+            )}
+            {selectedRecord.createdAt && selectedRecord.createdAt !== selectedRecord.reportedDate && (
+              <div style={{ marginTop: 4, paddingTop: 12, borderTop: '1px solid var(--border)' }}>
+                <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>Audit</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px' }}>
+                  <div>
+                    <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>Created On</div>
+                    <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)' }}>{formatDateTime(selectedRecord.createdAt)}</div>
+                  </div>
                 </div>
               </div>
             )}

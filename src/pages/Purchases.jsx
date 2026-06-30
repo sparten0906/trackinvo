@@ -8,7 +8,7 @@ import { useApp } from '../context/AppContext';
 import Modal from '../components/ui/Modal';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { FormField, Input, Select } from '../components/forms/FormField';
-import { formatCurrency, formatDate, formatDateTime, searchFilter, today, calcPurchaseTotals } from '../utils/helpers';
+import { formatCurrency, formatDate, formatDateTime, formatTableDateTime, searchFilter, today, calcPurchaseTotals } from '../utils/helpers';
 import toast from 'react-hot-toast';
 
 const emptyForm = { supplierId: '', date: today(), expectedDate: today(), paymentStatus: 'paid', status: 'received', notes: '' };
@@ -214,7 +214,8 @@ export default function Purchases() {
                       <div style={{ minWidth: 0 }}>
                         <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'monospace' }}>{pur.purchaseNumber}</p>
                         <p style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-secondary)', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{pur.supplierName || '—'}</p>
-                        <p style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 2 }}>{formatDate(pur.date)} · {(pur.items || []).length} item{(pur.items||[]).length !== 1 ? 's' : ''}</p>
+                        {(() => { const dt = formatTableDateTime(pur.date, pur.createdAt); return (<><div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 2, whiteSpace: 'nowrap' }}>{dt.date}</div>{dt.time && <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)', marginTop: 1 }}>{dt.time}</div>}</>); })()}
+                        <p style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 2 }}>{(pur.items || []).length} item{(pur.items||[]).length !== 1 ? 's' : ''}</p>
                       </div>
                       <div style={{ textAlign: 'right', flexShrink: 0 }}>
                         <p style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)', fontVariantNumeric: 'tabular-nums' }}>{formatCurrency(pur.grandTotal || 0, sym)}</p>
@@ -249,7 +250,6 @@ export default function Purchases() {
                     <StatusBadge status={selPurchase.status} />
                     <PayBadge status={selPurchase.paymentStatus} />
                     <span style={{ fontSize: 11.5, color: 'var(--text-tertiary)' }}>{formatDate(selPurchase.date)}</span>
-                    {selPurchase.createdAt && <span style={{ fontSize: 11.5, color: 'var(--text-tertiary)' }}>{formatDateTime(selPurchase.createdAt)}</span>}
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: 6 }}>
@@ -356,6 +356,19 @@ export default function Purchases() {
                       <span style={{ fontSize: 12.5, color: 'var(--text-secondary)' }}>{formatDateTime(selPurchase.completedAt)}</span>
                     </div>
                   )}
+                </div>
+              )}
+
+              {/* Audit */}
+              {selPurchase.createdAt && (
+                <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid var(--border)' }}>
+                  <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>Audit</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px' }}>
+                    <div>
+                      <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>Created On</div>
+                      <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)' }}>{formatDateTime(selPurchase.createdAt)}</div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

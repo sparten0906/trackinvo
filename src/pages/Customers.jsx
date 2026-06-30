@@ -436,6 +436,18 @@ export default function Customers() {
                       </div>
                     </div>
                   )}
+
+                  {selCustomer.createdAt && (
+                    <div style={{ marginTop:16,paddingTop:12,borderTop:'1px solid var(--border)' }}>
+                      <div style={{ fontSize:10.5,fontWeight:700,color:'var(--text-tertiary)',textTransform:'uppercase',letterSpacing:'0.07em',marginBottom:8 }}>Audit</div>
+                      <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:'8px 16px' }}>
+                        <div>
+                          <div style={{ fontSize:10.5,color:'var(--text-tertiary)' }}>Created On</div>
+                          <div style={{ fontSize:12.5,fontWeight:500,color:'var(--text-primary)' }}>{formatDateTime(selCustomer.createdAt)}</div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -452,7 +464,10 @@ export default function Customers() {
                       <div style={{ display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:8 }}>
                         <div>
                           <p style={{ fontSize:13,fontWeight:700,color:'var(--text-primary)',fontFamily:'monospace' }}>{inv.invoiceNumber}</p>
-                          <p style={{ fontSize:11.5,color:'var(--text-tertiary)',marginTop:2 }}>{formatDate(inv.date)}</p>
+                          <div style={{ marginTop:3 }}>
+                            <span style={{ fontSize:10.5,color:'var(--text-tertiary)' }}>Invoice Date: </span>
+                            <span style={{ fontSize:11.5,color:'var(--text-secondary)',fontWeight:500 }}>{formatDate(inv.date)}</span>
+                          </div>
                         </div>
                         <div style={{ textAlign:'right' }}>
                           <p style={{ fontSize:14,fontWeight:800,color:'var(--text-primary)',fontVariantNumeric:'tabular-nums' }}>{formatCurrency(inv.grandTotal||0,sym)}</p>

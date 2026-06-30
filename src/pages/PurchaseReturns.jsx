@@ -8,7 +8,7 @@ import { useApp } from '../context/AppContext';
 import Modal from '../components/ui/Modal';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { FormField, Input, Select, Textarea } from '../components/forms/FormField';
-import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, generateId, today } from '../utils/helpers';
+import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, formatTableDateTime, generateId, today } from '../utils/helpers';
 import toast from 'react-hot-toast';
 
 /* ── Status config ───────────────────────────────────────────────────────── */
@@ -445,7 +445,7 @@ export default function PurchaseReturns() {
               <tr style={{ background: 'var(--canvas)', position: 'sticky', top: 0, zIndex: 10 }}>
                 {[
                   ['Return No', 'left'],
-                  ['Date', 'left'],
+                  ['Return Date', 'left'],
                   ['Supplier', 'left'],
                   ['Product', 'left'],
                   ['Qty', 'right'],
@@ -478,7 +478,7 @@ export default function PurchaseReturns() {
                   >
                     <td style={{ padding: '11px 12px', fontWeight: 700, color: 'var(--brand)', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{r.returnNumber}</td>
                     <td style={{ padding: '11px 12px', whiteSpace: 'nowrap' }}>
-                      {(() => { const { date, time } = formatDateTimeSplit(r.createdAt || r.date); return (<><div style={{ fontSize: 12, color: 'var(--text-primary)', fontWeight: 600 }}>{date}</div><div style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>{time}</div></>); })()}
+                      {(() => { const dt = formatTableDateTime(r.date || r.returnDate || r.returnedAt, r.createdAt); return (<><div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{dt.date}</div>{dt.time && <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1 }}>{dt.time}</div>}</>); })()}
                     </td>
                     <td style={{ padding: '11px 12px', color: 'var(--text-secondary)', maxWidth: 130, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.supplierName || '—'}</td>
                     <td style={{ padding: '11px 12px', color: 'var(--text-primary)', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -699,7 +699,7 @@ export default function PurchaseReturns() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
               {[
                 ['Return No',   selectedReturn.returnNumber],
-                ['Return Date', formatDateTime(selectedReturn.createdAt || selectedReturn.date)],
+                ['Return Date', formatDate(selectedReturn.date || selectedReturn.returnDate || selectedReturn.returnedAt)],
                 ['Supplier',    selectedReturn.supplierName || '—'],
                 ['Reason',      REASON_LABELS[selectedReturn.reason] || selectedReturn.reason || '—'],
                 ['Source Type', selSource.type],
@@ -710,6 +710,16 @@ export default function PurchaseReturns() {
                   <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', fontFamily: ['Return No','Source Ref'].includes(k) ? 'monospace' : 'inherit' }}>{v}</div>
                 </div>
               ))}
+            </div>
+            {/* Audit section */}
+            <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid var(--border)' }}>
+              <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>Audit</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px' }}>
+                <div>
+                  <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>Created On</div>
+                  <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)' }}>{formatDateTime(selectedReturn.createdAt)}</div>
+                </div>
+              </div>
             </div>
 
             {/* Items table */}
