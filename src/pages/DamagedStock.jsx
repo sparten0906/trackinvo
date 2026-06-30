@@ -200,7 +200,7 @@ export default function DamagedStock() {
                       onMouseLeave={e => e.currentTarget.style.background = ''}>
                       <td style={{ padding: '10px 14px', fontWeight: 700, color: '#D97706', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{rec.damageNumber}</td>
                       <td style={{ padding: '10px 14px', whiteSpace: 'nowrap' }}>
-                        {(() => { const { date, time } = formatDateTimeSplit(rec.reportedDate || rec.createdAt); return (<><div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{date}</div>{time && <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1 }}>{time}</div>}</>); })()}
+                        <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{formatDate(rec.reportedDate || rec.createdAt)}</div>
                       </td>
                       <td style={{ padding: '10px 14px', fontWeight: 600, color: 'var(--text-primary)', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{rec.productName}</td>
                       <td style={{ padding: '10px 14px', color: 'var(--text-tertiary)', fontFamily: 'monospace', fontSize: 11.5, whiteSpace: 'nowrap' }}>{rec.sku || '—'}</td>

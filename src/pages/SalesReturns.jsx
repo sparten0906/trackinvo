@@ -102,12 +102,12 @@ function DetailModal({ ret, sym, onClose }) {
 
   return (
     <div
-      style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px 16px', background: 'rgba(15,15,20,0.55)', backdropFilter: 'blur(3px)' }}
+      style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '20px 16px', overflowY: 'auto', background: 'rgba(15,15,20,0.55)', backdropFilter: 'blur(3px)' }}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div style={{
         width: '100%', maxWidth: 660,
-        maxHeight: 'calc(100vh - 40px)',
+        maxHeight: 'none',
         background: 'var(--surface)',
         borderRadius: 14,
         boxShadow: '0 24px 64px rgba(0,0,0,0.22), 0 4px 16px rgba(0,0,0,0.1)',
@@ -491,7 +491,9 @@ export default function SalesReturns() {
                           <span style={{ fontSize: 13, color: 'var(--text-primary)', fontWeight: 500, display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ret.customerName || '—'}</span>
                         </td>
                         <td style={{ padding: '11px 16px' }}>
-                          {(() => { const dt = formatTableDateTime(ret.date || ret.returnDate, ret.createdAt); return <><div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{dt.date}</div>{dt.time && <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1 }}>{dt.time}</div>}</>; })()}
+                          <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>
+                            {formatDate(ret.date || ret.returnDate || ret.createdAt)}
+                          </div>
                         </td>
                         <td style={{ padding: '11px 16px', fontSize: 13, color: 'var(--text-secondary)', textAlign: 'center' }}>
                           {(ret.items || []).length}

@@ -175,14 +175,17 @@ export const formatBusinessDateTimeSplit = (primaryValue, fallbackValue) => {
 export const formatTableDateTime = (businessDate, createdAt) => {
   // If the business date is already a full timestamp, use it
   if (businessDate && hasTime(businessDate)) return formatDateTimeSplit(businessDate);
-  // Business date is date-only: show it as the date, use createdAt for the time line
+  // Business date is date-only: show it as the date line;
+  // only use createdAt for the time if createdAt is itself a full timestamp (not date-only).
+  // This prevents "5:30 AM" appearing when createdAt is stored as "YYYY-MM-DD" (UTC midnight = IST 5:30).
   if (businessDate && _isDateOnly(businessDate)) {
     const datePart = formatDate(businessDate);
-    const timePart = createdAt ? formatTime(createdAt) : '';
+    const timePart = (createdAt && hasTime(createdAt)) ? formatTime(createdAt) : '';
     return { date: datePart, time: timePart };
   }
-  // No business date: fall back to createdAt fully
-  return formatDateTimeSplit(createdAt);
+  // No business date: fall back to createdAt fully (only show time if it's a real timestamp)
+  if (createdAt && hasTime(createdAt)) return formatDateTimeSplit(createdAt);
+  return { date: formatDate(createdAt), time: '' };
 };
 
 /**

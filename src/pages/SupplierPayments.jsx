@@ -6,7 +6,7 @@ import {
   ArrowUpRight, ChevronDown, ChevronUp, Calendar, Check,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, formatModalDateTime, today } from '../utils/helpers';
+import { formatCurrency, formatDate, formatDateTime, formatModalDateTime, today } from '../utils/helpers';
 import Modal from '../components/ui/Modal';
 import PayableReceiptViewer from '../components/payables/PayableReceiptViewer';
 
@@ -786,7 +786,7 @@ export default function Payables() {
                       <td style={{ padding: '10px 10px' }}><StatusBadge status={row.status} /></td>
                       <td style={{ padding: '10px 10px', whiteSpace: 'nowrap', fontSize: 12 }}>
                         {row.lastPaymentDate
-                          ? (() => { const dt = formatDateTimeSplit(row.lastPaymentDate || (row.payments[0] && (row.payments[0].payment_date || row.payments[0].date))); return <><div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{dt.date}</div>{dt.time && <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1 }}>{dt.time}</div>}<PayModeChip mode={row.lastPaymentMode} /></>; })()
+                          ? <><div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{formatDate(row.lastPaymentDate || (row.payments[0] && (row.payments[0].payment_date || row.payments[0].date)))}</div><PayModeChip mode={row.lastPaymentMode} /></>
                           : <span style={{ color: 'var(--border)' }}>—</span>}
                       </td>
                       <td style={{ padding: '10px 10px' }} onClick={e => e.stopPropagation()}>

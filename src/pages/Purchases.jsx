@@ -214,7 +214,7 @@ export default function Purchases() {
                       <div style={{ minWidth: 0 }}>
                         <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'monospace' }}>{pur.purchaseNumber}</p>
                         <p style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-secondary)', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{pur.supplierName || '—'}</p>
-                        {(() => { const dt = formatTableDateTime(pur.date, pur.createdAt); return (<><div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 2, whiteSpace: 'nowrap' }}>{dt.date}</div>{dt.time && <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)', marginTop: 1 }}>{dt.time}</div>}</>); })()}
+                        <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap', marginTop: 2 }}>{formatDate(pur.date || pur.createdAt)}</div>
                         <p style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 2 }}>{(pur.items || []).length} item{(pur.items||[]).length !== 1 ? 's' : ''}</p>
                       </div>
                       <div style={{ textAlign: 'right', flexShrink: 0 }}>

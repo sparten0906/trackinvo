@@ -751,7 +751,7 @@ export default function StockTransactions() {
   // Table column definitions
   const COLS = [
     { key: '#',          label: '#',             w: 44,   align: 'center' },
-    { key: 'date',       label: 'Date & Time',   w: 96,   align: 'left'   },
+    { key: 'date',       label: 'Date',          w: 96,   align: 'left'   },
     { key: 'product',    label: 'Product',       w: 'auto', align: 'left' },
     { key: 'type',       label: 'Transaction',   w: 148,  align: 'left'   },
     { key: 'source',     label: 'Source',        w: 110,  align: 'left'   },
@@ -908,9 +908,9 @@ export default function StockTransactions() {
                       <td style={{ padding: '8px 6px', textAlign: 'center', borderLeft: `3px solid ${stripeClr}` }}>
                         <span style={{ fontSize: 10.5, color: 'var(--text-disabled)', fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>{rowN}</span>
                       </td>
-                      {/* Date & Time */}
+                      {/* Date */}
                       <td style={{ padding: '8px 11px', whiteSpace: 'nowrap' }}>
-                        {(() => { const dt = formatDateTimeSplit(tx.createdAt); return (<><div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{dt.date}</div>{dt.time && <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1 }}>{dt.time}</div>}</>); })()}
+                        <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{formatDate(tx.createdAt)}</div>
                       </td>
                       {/* Product */}
                       <td style={{ padding: '8px 11px', minWidth: 160, maxWidth: 220 }}>

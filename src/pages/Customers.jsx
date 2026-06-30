@@ -497,7 +497,7 @@ export default function Customers() {
                       <div style={{ flex:1,paddingTop:3 }}>
                         <p style={{ fontSize:13,fontWeight:600,color:'var(--text-primary)' }}>{ev.label}</p>
                         <div style={{ display:'flex',alignItems:'center',gap:8,marginTop:2 }}>
-                          <p style={{ fontSize:11.5,color:'var(--text-tertiary)' }}>{formatModalDateTime(ev.date, ev.createdAt)}</p>
+                          <p style={{ fontSize:11.5,color:'var(--text-tertiary)' }}>{formatDateTime(ev.date || ev.createdAt || ev.timestamp)}</p>
                           {ev.amount != null && <p style={{ fontSize:12,fontWeight:700,color:'var(--text-secondary)',fontVariantNumeric:'tabular-nums' }}>{formatCurrency(ev.amount,sym)}</p>}
                           {ev.status && <PayBadge status={ev.status}/>}
                         </div>

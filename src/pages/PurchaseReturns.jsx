@@ -478,7 +478,9 @@ export default function PurchaseReturns() {
                   >
                     <td style={{ padding: '11px 12px', fontWeight: 700, color: 'var(--brand)', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{r.returnNumber}</td>
                     <td style={{ padding: '11px 12px', whiteSpace: 'nowrap' }}>
-                      {(() => { const dt = formatTableDateTime(r.date || r.returnDate || r.returnedAt, r.createdAt); return (<><div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{dt.date}</div>{dt.time && <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1 }}>{dt.time}</div>}</>); })()}
+                      <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>
+                        {formatDate(r.date || r.returnDate || r.returnedAt)}
+                      </div>
                     </td>
                     <td style={{ padding: '11px 12px', color: 'var(--text-secondary)', maxWidth: 130, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.supplierName || '—'}</td>
                     <td style={{ padding: '11px 12px', color: 'var(--text-primary)', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>

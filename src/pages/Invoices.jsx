@@ -387,10 +387,9 @@ export default function Invoices() {
                     >
                       <td style={{ padding: '10px 12px', fontWeight: 700, color: isSel ? 'var(--brand)' : 'var(--text-primary)', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{inv.invoiceNumber}</td>
                       <td style={{ padding: '10px 12px', whiteSpace: 'nowrap' }}>
-                        {(() => { const dt = formatTableDateTime(inv.date, inv.createdAt); return (<>
-                          <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{dt.date}</div>
-                          {dt.time && <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1 }}>{dt.time}</div>}
-                        </>); })()}
+                        <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>
+                          {formatDate(inv.date || inv.createdAt)}
+                        </div>
                       </td>
                       <td style={{ padding: '10px 12px', color: 'var(--text-secondary)', maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cust?.name || '—'}</td>
                       <td style={{ padding: '10px 12px', textAlign: 'right', color: 'var(--text-secondary)' }}>{(inv.items || []).length}</td>

@@ -1441,7 +1441,7 @@ export default function PurchaseOrders() {
                     </td>
                     <td style={{ padding: '11px 12px', fontWeight: 700, color: 'var(--brand)', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{ref}</td>
                     <td style={{ padding: '11px 12px', whiteSpace: 'nowrap' }}>
-                      {(() => { const dt = formatTableDateTime(isGP ? item.date : item.orderDate, item.createdAt); return (<><div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{dt.date}</div>{dt.time && <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1 }}>{dt.time}</div>}</>); })()}
+                      <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{formatDate(isGP ? item.date : item.orderDate)}</div>
                     </td>
                     <td style={{ padding: '11px 12px', color: 'var(--text-secondary)', maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.supplierName || '—'}</td>
                     <td style={{ padding: '11px 12px', textAlign: 'right', color: 'var(--text-secondary)' }}>{(item.items || []).length}</td>
@@ -1706,7 +1706,7 @@ export default function PurchaseOrders() {
                       <div>
                         <div style={{ fontSize: 12, fontWeight: 700, color: cfg.fg }}>{cfg.label}</div>
                         {entry.note && <div style={{ fontSize: 11.5, color: 'var(--text-secondary)', marginTop: 1 }}>{entry.note}</div>}
-                        <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1 }}>{formatDateTime(entry.date)}</div>
+                        <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1 }}>{formatDateTime(entry.date || entry.createdAt)}</div>
                       </div>
                     </div>
                   );
