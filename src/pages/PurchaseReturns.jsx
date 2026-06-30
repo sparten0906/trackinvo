@@ -713,17 +713,6 @@ export default function PurchaseReturns() {
                 </div>
               ))}
             </div>
-            {/* Audit section */}
-            <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid var(--border)' }}>
-              <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>Audit</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px' }}>
-                <div>
-                  <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>Created On</div>
-                  <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)' }}>{formatDateTime(selectedReturn.createdAt)}</div>
-                </div>
-              </div>
-            </div>
-
             {/* Items table */}
             <div style={{ border: '1px solid var(--border)', borderRadius: 10, overflow: 'hidden' }}>
               <div style={{ padding: '9px 12px', borderBottom: '1px solid var(--border)', fontSize: 12, fontWeight: 700, background: 'var(--canvas)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

@@ -102,12 +102,12 @@ function DetailModal({ ret, sym, onClose }) {
 
   return (
     <div
-      style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '20px 16px', overflowY: 'auto', background: 'rgba(15,15,20,0.55)', backdropFilter: 'blur(3px)' }}
+      style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '48px 16px 32px', overflowY: 'auto', background: 'rgba(15,15,20,0.55)', backdropFilter: 'blur(3px)' }}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div style={{
         width: '100%', maxWidth: 660,
-        maxHeight: 'none',
+        maxHeight: 'calc(100vh - 96px)',
         background: 'var(--surface)',
         borderRadius: 14,
         boxShadow: '0 24px 64px rgba(0,0,0,0.22), 0 4px 16px rgba(0,0,0,0.1)',
@@ -226,16 +226,6 @@ function DetailModal({ ret, sym, onClose }) {
                 </div>
               )}
 
-              {/* Audit section */}
-              <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid var(--border)' }}>
-                <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>Audit</div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px' }}>
-                  <div>
-                    <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>Created On</div>
-                    <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)' }}>{formatDateTime(ret.createdAt)}</div>
-                  </div>
-                </div>
-              </div>
             </div>
           )}
 

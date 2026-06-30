@@ -498,24 +498,6 @@ export default function Suppliers() {
                 )}
               </div>
 
-              {/* Audit */}
-              {vs.createdAt && (
-                <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid var(--border)' }}>
-                  <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>Audit</div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px' }}>
-                    <div>
-                      <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>Created On</div>
-                      <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)' }}>{formatDateTime(vs.createdAt)}</div>
-                    </div>
-                    {vs.updatedAt && (
-                      <div>
-                        <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>Updated On</div>
-                        <div style={{ fontSize: 12.5, fontWeight: 500, color: 'var(--text-primary)' }}>{formatDateTime(vs.updatedAt)}</div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
             </div>
           </Modal>
         );
