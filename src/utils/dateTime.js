@@ -88,12 +88,13 @@ export const formatTime = (value, tz) => {
 
 /**
  * "15 Jul 2026 • 10:45 AM"
- * Primary display format for all system timestamps (createdAt, updatedAt, etc.).
- * For pure YYYY-MM-DD values, returns date only — no fake time added.
+ * For date-only stored values (YYYY-MM-DD), falls back to current system time.
  */
 export const formatDateTime = (value, tz) => {
   if (!value) return '—';
-  if (_isDateOnly(value)) return formatDate(value);
+  if (_isDateOnly(value)) {
+    return `${formatDate(value)} • ${formatTime(new Date(), tz)}`;
+  }
   const p = _parts(value, {
     day: 'numeric', month: 'short', year: 'numeric',
     hour: 'numeric', minute: '2-digit', hour12: true,
@@ -104,11 +105,12 @@ export const formatDateTime = (value, tz) => {
 
 /**
  * "15 Jul • 10:45 AM" — compact, omits year.
- * Use in tight spaces: timeline pills, compact cards, tooltips.
  */
 export const formatDateTimeShort = (value, tz) => {
   if (!value) return '—';
-  if (_isDateOnly(value)) return formatDate(value);
+  if (_isDateOnly(value)) {
+    return `${formatDate(value).replace(/\s\d{4}$/, '')} • ${formatTime(new Date(), tz)}`;
+  }
   const p = _parts(value, {
     day: 'numeric', month: 'short',
     hour: 'numeric', minute: '2-digit', hour12: true,
@@ -119,12 +121,13 @@ export const formatDateTimeShort = (value, tz) => {
 
 /**
  * { date: "15 Jul 2026", time: "10:45 AM" }
- * For stacked two-line display in table cells and mobile views.
- * Returns empty time string for date-only values — caller skips the time row.
+ * For date-only stored values, falls back to current system time.
  */
 export const formatDateTimeSplit = (value, tz) => {
   if (!value) return { date: '—', time: '' };
-  if (_isDateOnly(value)) return { date: formatDate(value), time: '' };
+  if (_isDateOnly(value)) {
+    return { date: formatDate(value), time: formatTime(new Date(), tz) };
+  }
   const p = _parts(value, {
     day: 'numeric', month: 'short', year: 'numeric',
     hour: 'numeric', minute: '2-digit', hour12: true,
@@ -173,19 +176,16 @@ export const formatBusinessDateTimeSplit = (primaryValue, fallbackValue) => {
  * @param {string} createdAt     — ISO timestamp when the record was saved
  */
 export const formatTableDateTime = (businessDate, createdAt) => {
-  // If the business date is already a full timestamp, use it
   if (businessDate && hasTime(businessDate)) return formatDateTimeSplit(businessDate);
-  // Business date is date-only: show it as the date line;
-  // only use createdAt for the time if createdAt is itself a full timestamp (not date-only).
-  // This prevents "5:30 AM" appearing when createdAt is stored as "YYYY-MM-DD" (UTC midnight = IST 5:30).
   if (businessDate && _isDateOnly(businessDate)) {
     const datePart = formatDate(businessDate);
-    const timePart = (createdAt && hasTime(createdAt)) ? formatTime(createdAt) : '';
+    // Use real timestamp if available; fall back to current system time
+    const timePart = (createdAt && hasTime(createdAt)) ? formatTime(createdAt) : formatTime(new Date());
     return { date: datePart, time: timePart };
   }
-  // No business date: fall back to createdAt fully (only show time if it's a real timestamp)
   if (createdAt && hasTime(createdAt)) return formatDateTimeSplit(createdAt);
-  return { date: formatDate(createdAt), time: '' };
+  // Both values are date-only — use business/createdAt date + current system time
+  return { date: formatDate(createdAt || businessDate), time: formatTime(new Date()) };
 };
 
 /**
