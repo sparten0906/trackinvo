@@ -56,19 +56,7 @@ export const purchaseService = {
     const { error: itemsErr } = await supabase.from('purchase_items').insert(itemRows);
     if (itemsErr) throw new Error(itemsErr.message);
 
-    // 3. Increase stock + record movements
-    for (const item of purchase.items) {
-      const { data: prod } = await supabase.from('products').select('current_stock').eq('id', item.productId).single();
-      if (!prod) continue;
-      const newStock = prod.current_stock + Number(item.quantity);
-      await supabase.from('products').update({ current_stock: newStock, updated_at: new Date().toISOString() }).eq('id', item.productId);
-      await supabase.from('stock_movements').insert({
-        product_id: item.productId, movement_type: 'in', reference_type: 'purchase',
-        reference_id: pur.id, quantity: Number(item.quantity),
-        previous_stock: prod.current_stock, new_stock: newStock,
-        note: `Purchase ${purchase.purchaseNumber}`,
-      });
-    }
+    // Stock increase is handled by AppContext reducer (local state).
 
     return mapFromDb(pur);
   },

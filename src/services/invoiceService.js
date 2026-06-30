@@ -29,34 +29,26 @@ export const invoiceService = {
   },
 
   /**
-   * Create invoice with items, deduct stock, record movements.
-   * Validates stock before any DB write.
+   * Create invoice with items in Supabase.
+   * Stock validation and deduction are handled by AppContext reducer (local state).
    */
   async create(invoice) {
     requireSupabase();
 
-    // 1. Validate stock for each item
-    for (const item of invoice.items) {
-      const { data: product, error } = await supabase
-        .from('products').select('current_stock, name').eq('id', item.productId).single();
-      if (error) throw new Error(`Product not found: ${item.productId}`);
-      if (product.current_stock < item.quantity) {
-        throw new Error(`Insufficient stock for "${product.name}". Available: ${product.current_stock}, requested: ${item.quantity}`);
-      }
-    }
-
-    // 2. Insert invoice
     const { data: inv, error: invErr } = await supabase
       .from('invoices')
       .insert({
         invoice_number:  invoice.invoiceNumber,
         customer_id:     invoice.customerId || null,
+        customer_name:   invoice.customerName || null,
         subtotal:        Number(invoice.subtotal),
         discount_type:   invoice.discountType,
         discount_value:  Number(invoice.discountValue || 0),
         tax_total:       Number(invoice.taxAmount),
         grand_total:     Number(invoice.grandTotal),
         discount_amount: Number(invoice.discountAmount),
+        paid_amount:     Number(invoice.paidAmount || invoice.grandTotal),
+        balance_amount:  Number(invoice.balanceAmount || 0),
         payment_method:  invoice.paymentMethod,
         payment_status:  invoice.paymentStatus,
         invoice_date:    invoice.date,
@@ -65,31 +57,21 @@ export const invoiceService = {
       .select().single();
     if (invErr) throw new Error(invErr.message);
 
-    // 3. Insert items
-    const itemRows = invoice.items.map((item) => ({
-      invoice_id:     inv.id,
-      product_id:     item.productId,
-      product_name:   item.productName,
-      sku:            item.sku,
-      quantity:       Number(item.quantity),
-      unit_price:     Number(item.unitPrice),
-      tax_percentage: Number(item.taxPercent || 0),
-      tax_amount:     Number(item.unitPrice) * Number(item.quantity) * Number(item.taxPercent || 0) / 100,
-      total:          Number(item.unitPrice) * Number(item.quantity),
-    }));
-    const { error: itemsErr } = await supabase.from('invoice_items').insert(itemRows);
-    if (itemsErr) throw new Error(itemsErr.message);
-
-    // 4. Deduct stock + record movements
-    for (const item of invoice.items) {
-      const { data: prod } = await supabase.from('products').select('current_stock').eq('id', item.productId).single();
-      const newStock = Math.max(0, prod.current_stock - item.quantity);
-      await supabase.from('products').update({ current_stock: newStock, updated_at: new Date().toISOString() }).eq('id', item.productId);
-      await supabase.from('stock_movements').insert({
-        product_id: item.productId, movement_type: 'out', reference_type: 'invoice',
-        reference_id: inv.id, quantity: item.quantity, previous_stock: prod.current_stock, new_stock: newStock,
-        note: `Invoice ${invoice.invoiceNumber}`,
-      });
+    if (invoice.items?.length) {
+      const itemRows = invoice.items.map((item) => ({
+        invoice_id:     inv.id,
+        product_id:     item.productId || null,
+        product_name:   item.productName,
+        sku:            item.sku || null,
+        quantity:       Number(item.quantity),
+        unit_price:     Number(item.unitPrice),
+        tax_percentage: Number(item.taxPercent || 0),
+        tax_amount:     Number(item.unitPrice) * Number(item.quantity) * Number(item.taxPercent || 0) / 100,
+        discount:       Number(item.discount || 0),
+        total:          Number(item.unitPrice) * Number(item.quantity),
+      }));
+      const { error: itemsErr } = await supabase.from('invoice_items').insert(itemRows);
+      if (itemsErr) throw new Error(itemsErr.message);
     }
 
     return mapFromDb(inv);
