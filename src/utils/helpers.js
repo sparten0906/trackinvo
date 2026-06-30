@@ -11,6 +11,7 @@ import {
   formatBusinessDateTime as _formatBusinessDateTime,
   formatBusinessDateTimeSplit as _formatBusinessDateTimeSplit,
   formatTableDateTime as _formatTableDateTime,
+  formatModalDateTime as _formatModalDateTime,
   formatMobileDateTime as _formatMobileDateTime,
   formatDateForInput as _fmtDateForInput,
   getTodayLocalDate as _getTodayLocalDate,
@@ -32,6 +33,7 @@ export const formatTime                 = _formatTime;
 export const formatBusinessDateTime     = _formatBusinessDateTime;
 export const formatBusinessDateTimeSplit = _formatBusinessDateTimeSplit;
 export const formatTableDateTime        = _formatTableDateTime;
+export const formatModalDateTime        = _formatModalDateTime;
 export const formatMobileDateTime       = _formatMobileDateTime;
 export const formatDateForInput         = _fmtDateForInput;
 export const getTodayLocalDate          = _getTodayLocalDate;

@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import Modal from '../components/ui/Modal';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { FormField, Input, Select, Textarea } from '../components/forms/FormField';
-import { searchFilter, validateCustomer, formatCurrency, formatDate, formatDateTime, formatDateTimeSplit } from '../utils/helpers';
+import { searchFilter, validateCustomer, formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, formatModalDateTime } from '../utils/helpers';
 import toast from 'react-hot-toast';
 
 /* ── Avatar ─────────────────────────────────────────────────────────── */
@@ -420,7 +420,7 @@ export default function Customers() {
                             <FileText size={13} style={{ color:'var(--brand)',flexShrink:0 }}/>
                             <div style={{ flex:1,minWidth:0 }}>
                               <p style={{ fontSize:12.5,fontWeight:600,color:'var(--text-primary)',fontFamily:'monospace' }}>{inv.invoiceNumber}</p>
-                              <p style={{ fontSize:11,color:'var(--text-tertiary)' }}>{formatDate(inv.date)}</p>
+                              <p style={{ fontSize:11,color:'var(--text-tertiary)' }}>{formatModalDateTime(inv.date, inv.createdAt)}</p>
                             </div>
                             <div style={{ textAlign:'right' }}>
                               <p style={{ fontSize:13,fontWeight:700,color:'var(--text-primary)',fontVariantNumeric:'tabular-nums' }}>{formatCurrency(inv.grandTotal||0,sym)}</p>
@@ -466,7 +466,7 @@ export default function Customers() {
                           <p style={{ fontSize:13,fontWeight:700,color:'var(--text-primary)',fontFamily:'monospace' }}>{inv.invoiceNumber}</p>
                           <div style={{ marginTop:3 }}>
                             <span style={{ fontSize:10.5,color:'var(--text-tertiary)' }}>Invoice Date: </span>
-                            <span style={{ fontSize:11.5,color:'var(--text-secondary)',fontWeight:500 }}>{formatDate(inv.date)}</span>
+                            <span style={{ fontSize:11.5,color:'var(--text-secondary)',fontWeight:500 }}>{formatModalDateTime(inv.date, inv.createdAt)}</span>
                           </div>
                         </div>
                         <div style={{ textAlign:'right' }}>
@@ -497,7 +497,7 @@ export default function Customers() {
                       <div style={{ flex:1,paddingTop:3 }}>
                         <p style={{ fontSize:13,fontWeight:600,color:'var(--text-primary)' }}>{ev.label}</p>
                         <div style={{ display:'flex',alignItems:'center',gap:8,marginTop:2 }}>
-                          <p style={{ fontSize:11.5,color:'var(--text-tertiary)' }}>{formatDate(ev.date)}</p>
+                          <p style={{ fontSize:11.5,color:'var(--text-tertiary)' }}>{formatModalDateTime(ev.date, ev.createdAt)}</p>
                           {ev.amount != null && <p style={{ fontSize:12,fontWeight:700,color:'var(--text-secondary)',fontVariantNumeric:'tabular-nums' }}>{formatCurrency(ev.amount,sym)}</p>}
                           {ev.status && <PayBadge status={ev.status}/>}
                         </div>

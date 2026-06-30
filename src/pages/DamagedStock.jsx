@@ -7,7 +7,7 @@ import {
 import { useApp } from '../context/AppContext';
 import Modal from '../components/ui/Modal';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
-import { formatDate, formatDateTime, formatDateTimeSplit, formatCurrency, searchFilter, today } from '../utils/helpers';
+import { formatDate, formatDateTime, formatDateTimeSplit, formatModalDateTime, formatCurrency, searchFilter, today } from '../utils/helpers';
 import toast from 'react-hot-toast';
 
 const STATUS_CFG = {

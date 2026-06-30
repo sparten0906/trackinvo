@@ -191,6 +191,24 @@ export const formatTableDateTime = (businessDate, createdAt) => {
  */
 export const formatMobileDateTime = (value, tz) => formatDateTimeSplit(value, tz);
 
+/**
+ * Detail modal / panel single-line format:  "15 Jul 2026 • 10:45 AM"
+ *
+ * Uses the business date for the date part and createdAt for the time part,
+ * combined onto one line with " • " separator.
+ * If businessDate already contains a time component, that time is used directly.
+ * If there is no time source, returns date only.
+ *
+ * Use this everywhere a business date should be displayed with time in a modal or panel.
+ *
+ * @param {string} businessDate  — YYYY-MM-DD or ISO timestamp (invoice date, PO date, etc.)
+ * @param {string} createdAt     — ISO timestamp providing the time component when businessDate is date-only
+ */
+export const formatModalDateTime = (businessDate, createdAt) => {
+  const { date, time } = formatTableDateTime(businessDate, createdAt);
+  return time ? `${date} • ${time}` : date;
+};
+
 // ─── Input / filter helpers ───────────────────────────────────────────────────
 
 /**

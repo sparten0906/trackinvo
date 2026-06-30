@@ -10,7 +10,7 @@ import InvoiceViewer from '../components/invoice/InvoiceViewer';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import Modal from '../components/ui/Modal';
 import { FormField, Input, Select, Textarea } from '../components/forms/FormField';
-import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, formatTableDateTime, today } from '../utils/helpers';
+import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, formatTableDateTime, formatModalDateTime, today } from '../utils/helpers';
 
 const PAY_METHODS = [
   { value: 'cash',          label: 'Cash' },
@@ -509,7 +509,7 @@ export default function Invoices() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
                         <span style={{ color: 'var(--text-tertiary)' }}>Date</span>
-                        <span style={{ fontWeight: 600 }}>{formatDate(selInvoice.date)}</span>
+                        <span style={{ fontWeight: 600 }}>{formatModalDateTime(selInvoice.date, selInvoice.createdAt)}</span>
                       </div>
                       {selInvoice.dueDate && (
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
@@ -603,7 +603,7 @@ export default function Invoices() {
                       {selInvoice.payments.map((pmt, i) => (
                         <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', borderTop: i > 0 ? '1px solid var(--border)' : 'none', background: i % 2 === 0 ? 'var(--surface)' : 'var(--canvas)' }}>
                           <div style={{ display: 'flex', gap: 7, alignItems: 'center' }}>
-                            <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>{formatDate(pmt.date)}</span>
+                            <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>{formatDateTime(pmt.date)}</span>
                             <span style={{ background: 'var(--border)', borderRadius: 5, padding: '1px 7px', fontSize: 10.5, fontWeight: 600, color: 'var(--text-secondary)' }}>{PAY_METHODS.find(m => m.value === pmt.method)?.label || pmt.method}</span>
                             {pmt.reference && <span style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{pmt.reference}</span>}
                           </div>

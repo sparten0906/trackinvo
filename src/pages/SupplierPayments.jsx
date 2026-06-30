@@ -6,7 +6,7 @@ import {
   ArrowUpRight, ChevronDown, ChevronUp, Calendar, Check,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, today } from '../utils/helpers';
+import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, formatModalDateTime, today } from '../utils/helpers';
 import Modal from '../components/ui/Modal';
 import PayableReceiptViewer from '../components/payables/PayableReceiptViewer';
 

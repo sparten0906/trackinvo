@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, formatTableDateTime } from '../utils/helpers';
+import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, formatTableDateTime, formatModalDateTime } from '../utils/helpers';
 
 // ─── Config ────────────────────────────────────────────────────────────────────
 
@@ -188,7 +188,7 @@ function DetailModal({ ret, sym, onClose }) {
                     ['Return No.',   ret.returnNumber || '—'],
                     ['Invoice',      ret.invoiceNumber || '—'],
                     ['Customer',     ret.customerName  || '—'],
-                    ['Return Date',  formatDate(ret.date)],
+                    ['Return Date',  formatModalDateTime(ret.date, ret.createdAt)],
                     ['Refund Via',   REFUND_LABELS[ret.refundMode || ret.refundMethod] || '—'],
                     ['Reason',       ret.reason || '—'],
                   ].map(([k, v], i) => (

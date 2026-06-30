@@ -6,7 +6,7 @@ import ConfirmDialog from '../components/ui/ConfirmDialog';
 import Pagination from '../components/ui/Pagination';
 import EmptyState from '../components/ui/EmptyState';
 import { FormField, Input, Select, Textarea } from '../components/forms/FormField';
-import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, searchFilter, paginate, validateProduct, isLowStock } from '../utils/helpers';
+import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, formatModalDateTime, searchFilter, paginate, validateProduct, isLowStock } from '../utils/helpers';
 
 const UNITS = ['pcs', 'kg', 'g', 'ltr', 'ml', 'box', 'pack', 'pair', 'set', 'ream', 'bottle', 'bag'];
 const PAGE_SIZE = 15;
@@ -927,7 +927,7 @@ export default function Products() {
                               {supp?.name || 'Unknown'}
                               {r.isPreferred && <span style={{ fontSize: 9.5, fontWeight: 700, padding: '1px 6px', borderRadius: 20, background: 'var(--brand)', color: '#fff' }}>Preferred</span>}
                             </div>
-                            {r.lastPurchaseDate && <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>Last: {formatDate(r.lastPurchaseDate)}</div>}
+                            {r.lastPurchaseDate && <div style={{ fontSize: 10.5, color: 'var(--text-tertiary)' }}>Last: {formatModalDateTime(r.lastPurchaseDate, r.updatedAt)}</div>}
                           </div>
                           <div style={{ textAlign: 'right', fontSize: 13, fontWeight: 700, color: isCheapest ? '#16A34A' : 'var(--text-primary)' }}>{formatCurrency(r.lastPurchasePrice, sym)}</div>
                           <div style={{ textAlign: 'right', fontSize: 12, color: 'var(--text-secondary)' }}>{formatCurrency(r.averagePurchasePrice, sym)}</div>

@@ -8,7 +8,7 @@ import {
   Truck, UserPlus, Check, Zap,
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, isLowStock } from '../utils/helpers';
+import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, formatModalDateTime, isLowStock } from '../utils/helpers';
 import AppIcon from '../components/icons/AppIcon';
 
 /* ─── time-ago helper ───────────────────────────────────────────────── */
@@ -578,12 +578,11 @@ export default function Dashboard() {
                               background: item.status==='paid'?'var(--success-bg)':item.status==='partial'?'var(--warning-bg)':'var(--error-bg)',
                             }}>{item.status}</span>
                           )}
-                          {item.time && (() => { const dt = formatDateTimeSplit(item.time); return (
-                            <div style={{ marginLeft:'auto', flexShrink:0, textAlign:'right' }}>
-                              <div style={{ fontSize:11, color:'var(--text-primary)', fontWeight:600 }}>{dt.date}</div>
-                              <div style={{ fontSize:10, color:'var(--text-tertiary)' }}>{dt.time}</div>
-                            </div>
-                          ); })()}
+                          {item.time && (
+                            <span style={{ marginLeft:'auto', flexShrink:0, fontSize:11, color:'var(--text-tertiary)', fontWeight:500, whiteSpace:'nowrap' }}>
+                              {formatDateTime(item.time)}
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>

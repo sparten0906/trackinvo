@@ -8,7 +8,7 @@ import { useApp } from '../context/AppContext';
 import Modal from '../components/ui/Modal';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { FormField, Input, Select, Textarea } from '../components/forms/FormField';
-import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, formatTableDateTime, generateId, today } from '../utils/helpers';
+import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, formatTableDateTime, formatModalDateTime, generateId, today } from '../utils/helpers';
 import toast from 'react-hot-toast';
 
 /* ── Status config ───────────────────────────────────────────────────────── */
@@ -699,7 +699,7 @@ export default function PurchaseReturns() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
               {[
                 ['Return No',   selectedReturn.returnNumber],
-                ['Return Date', formatDate(selectedReturn.date || selectedReturn.returnDate || selectedReturn.returnedAt)],
+                ['Return Date', formatModalDateTime(selectedReturn.date || selectedReturn.returnDate || selectedReturn.returnedAt, selectedReturn.createdAt)],
                 ['Supplier',    selectedReturn.supplierName || '—'],
                 ['Reason',      REASON_LABELS[selectedReturn.reason] || selectedReturn.reason || '—'],
                 ['Source Type', selSource.type],

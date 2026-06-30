@@ -14,7 +14,7 @@ import { useApp } from '../context/AppContext';
 import Modal from '../components/ui/Modal';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { FormField, Input, Select, Textarea } from '../components/forms/FormField';
-import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, formatTableDateTime, generateId, today, validateSupplier } from '../utils/helpers';
+import { formatCurrency, formatDate, formatDateTime, formatDateTimeSplit, formatTableDateTime, formatModalDateTime, generateId, today, validateSupplier } from '../utils/helpers';
 import toast from 'react-hot-toast';
 
 /* ── Status config ─────────────────────────────────────────────────────── */
@@ -1533,7 +1533,7 @@ export default function PurchaseOrders() {
                 <table style={{ fontSize: 12, borderCollapse: 'collapse', width: '100%' }}>
                   <tbody>
                     {[
-                      ['Order Date',    formatDate(selectedPO.orderDate)],
+                      ['Order Date',    formatModalDateTime(selectedPO.orderDate, selectedPO.createdAt)],
                       ['Expected',      selectedPO.expectedDate ? formatDate(selectedPO.expectedDate) : '—'],
                       ['Order Value',   formatCurrency(selectedPO.grandTotal || 0, sym)],
                       selectedPO.paymentTerms ? ['Payment Terms', `Net ${selectedPO.paymentTerms} days`] : null,
@@ -2724,7 +2724,7 @@ export default function PurchaseOrders() {
                   <tbody>
                     {[
                       ['Reference',      selectedGP.gpNumber || selectedGP.purchaseNumber],
-                      ['Date',           formatDate(selectedGP.date)],
+                      ['Date',           formatModalDateTime(selectedGP.date, selectedGP.createdAt)],
                       ['Total Value',    formatCurrency(selectedGP.grandTotal || 0, sym)],
                       ['Payment Status', selectedGP.paymentStatus || '—'],
                     ].map(([k, v]) => (
@@ -2733,12 +2733,6 @@ export default function PurchaseOrders() {
                         <td style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{v}</td>
                       </tr>
                     ))}
-                    {selectedGP.createdAt && (
-                      <tr>
-                        <td style={{ color: 'var(--text-tertiary)', paddingRight: 10, paddingBottom: 3, whiteSpace: 'nowrap' }}>Created</td>
-                        <td style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{formatDateTime(selectedGP.createdAt)}</td>
-                      </tr>
-                    )}
                   </tbody>
                 </table>
               </div>

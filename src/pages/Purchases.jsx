@@ -8,7 +8,7 @@ import { useApp } from '../context/AppContext';
 import Modal from '../components/ui/Modal';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import { FormField, Input, Select } from '../components/forms/FormField';
-import { formatCurrency, formatDate, formatDateTime, formatTableDateTime, searchFilter, today, calcPurchaseTotals } from '../utils/helpers';
+import { formatCurrency, formatDate, formatDateTime, formatTableDateTime, formatModalDateTime, searchFilter, today, calcPurchaseTotals } from '../utils/helpers';
 import toast from 'react-hot-toast';
 
 const emptyForm = { supplierId: '', date: today(), expectedDate: today(), paymentStatus: 'paid', status: 'received', notes: '' };
@@ -249,7 +249,7 @@ export default function Purchases() {
                   <div style={{ display: 'flex', gap: 8, marginTop: 6, flexWrap: 'wrap' }}>
                     <StatusBadge status={selPurchase.status} />
                     <PayBadge status={selPurchase.paymentStatus} />
-                    <span style={{ fontSize: 11.5, color: 'var(--text-tertiary)' }}>{formatDate(selPurchase.date)}</span>
+                    <span style={{ fontSize: 11.5, color: 'var(--text-tertiary)' }}>{formatModalDateTime(selPurchase.date, selPurchase.createdAt)}</span>
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: 6 }}>
