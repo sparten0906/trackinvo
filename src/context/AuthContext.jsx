@@ -31,25 +31,40 @@ export function AuthProvider({ children }) {
 
   // ─── On mount: restore session ─────────────────────────────────────────────
   useEffect(() => {
-    // ── SUPABASE_AUTH (uncomment to use real Supabase Auth) ──────────────────
-    // if (isSupabaseConfigured && supabase) {
-    //   supabase.auth.getSession().then(({ data: { session } }) => {
-    //     setUser(session?.user ?? null);
-    //     setIsLoading(false);
-    //   });
-    //   const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-    //     setUser(session?.user ?? null);
-    //   });
-    //   return () => subscription.unsubscribe();
-    // }
-    // ── END SUPABASE_AUTH ────────────────────────────────────────────────────
+    if (isSupabaseConfigured && supabase) {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session?.user) {
+          setUser({
+            id: session.user.id,
+            email: session.user.email,
+            name: session.user.user_metadata?.name || session.user.email,
+            role: session.user.user_metadata?.role || 'Administrator',
+            avatarInitial: (session.user.user_metadata?.name || session.user.email || 'A')[0].toUpperCase(),
+          });
+        }
+        setIsLoading(false);
+      });
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        if (session?.user) {
+          setUser({
+            id: session.user.id,
+            email: session.user.email,
+            name: session.user.user_metadata?.name || session.user.email,
+            role: session.user.user_metadata?.role || 'Administrator',
+            avatarInitial: (session.user.user_metadata?.name || session.user.email || 'A')[0].toUpperCase(),
+          });
+        } else {
+          setUser(null);
+        }
+      });
+      return () => subscription.unsubscribe();
+    }
 
     // Demo mode: restore from localStorage (remember me) or sessionStorage (tab session)
     try {
       const raw = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY);
       if (raw) {
         const session = JSON.parse(raw);
-        // Validate session hasn't been tampered with
         if (session?.id === DEMO_USER.id) setUser(session);
       }
     } catch {
@@ -63,45 +78,44 @@ export function AuthProvider({ children }) {
   const login = useCallback(async (email, password, rememberMe = false) => {
     setError('');
 
-    // ── SUPABASE_AUTH ────────────────────────────────────────────────────────
-    // if (isSupabaseConfigured && supabase) {
-    //   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    //   if (error) throw new Error(error.message);
-    //   setUser(data.user);
-    //   return data.user;
-    // }
-    // ── END SUPABASE_AUTH ────────────────────────────────────────────────────
+    if (isSupabaseConfigured && supabase) {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw new Error(error.message);
+      const u = data.user;
+      const sessionUser = {
+        id: u.id,
+        email: u.email,
+        name: u.user_metadata?.name || u.email,
+        role: u.user_metadata?.role || 'Administrator',
+        avatarInitial: (u.user_metadata?.name || u.email || 'A')[0].toUpperCase(),
+      };
+      setUser(sessionUser);
+      return sessionUser;
+    }
 
-    // Demo mode validation
-    await new Promise((r) => setTimeout(r, 800)); // simulate network
-
+    // Demo mode fallback (no Supabase configured)
+    await new Promise((r) => setTimeout(r, 800));
     if (email.toLowerCase().trim() !== DEMO_USER.email) {
       throw new Error('No account found with that email address.');
     }
     if (password !== DEMO_PASSWORD) {
       throw new Error('Incorrect password. Try: demo123');
     }
-
     const sessionUser = { ...DEMO_USER, rememberMe };
     setUser(sessionUser);
-
     if (rememberMe) {
       localStorage.setItem(SESSION_KEY, JSON.stringify(sessionUser));
     } else {
       sessionStorage.setItem(SESSION_KEY, JSON.stringify(sessionUser));
     }
-
     return sessionUser;
   }, []);
 
   // ─── Logout ────────────────────────────────────────────────────────────────
   const logout = useCallback(async () => {
-    // ── SUPABASE_AUTH ────────────────────────────────────────────────────────
-    // if (isSupabaseConfigured && supabase) {
-    //   await supabase.auth.signOut();
-    // }
-    // ── END SUPABASE_AUTH ────────────────────────────────────────────────────
-
+    if (isSupabaseConfigured && supabase) {
+      await supabase.auth.signOut();
+    }
     localStorage.removeItem(SESSION_KEY);
     sessionStorage.removeItem(SESSION_KEY);
     setUser(null);
