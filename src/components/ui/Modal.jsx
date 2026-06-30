@@ -17,8 +17,8 @@ export default function Modal({ open, onClose, title, children, size = 'md', foo
     <div
       style={{
         position: 'fixed', inset: 0, zIndex: 9999,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: '16px',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        padding: '24px 16px', overflowY: 'auto',
       }}
     >
       {/* Backdrop */}
@@ -38,7 +38,8 @@ export default function Modal({ open, onClose, title, children, size = 'md', foo
           position: 'relative',
           display: 'flex', flexDirection: 'column',
           width: '100%', maxWidth: maxW,
-          maxHeight: 'calc(100dvh - 32px)',
+          maxHeight: 'calc(100vh - 48px)',
+          marginTop: 'auto', marginBottom: 'auto',
           background: 'var(--surface)',
           borderRadius: 20,
           boxShadow: '0 32px 64px rgba(0,0,0,0.2)',

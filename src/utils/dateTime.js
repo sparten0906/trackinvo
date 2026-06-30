@@ -88,13 +88,11 @@ export const formatTime = (value, tz) => {
 
 /**
  * "15 Jul 2026 • 10:45 AM"
- * For date-only stored values (YYYY-MM-DD), falls back to current system time.
+ * Date-only values (YYYY-MM-DD) show date only — never invent a time.
  */
 export const formatDateTime = (value, tz) => {
   if (!value) return '—';
-  if (_isDateOnly(value)) {
-    return `${formatDate(value)} • ${formatTime(new Date(), tz)}`;
-  }
+  if (_isDateOnly(value)) return formatDate(value);
   const p = _parts(value, {
     day: 'numeric', month: 'short', year: 'numeric',
     hour: 'numeric', minute: '2-digit', hour12: true,
@@ -105,12 +103,11 @@ export const formatDateTime = (value, tz) => {
 
 /**
  * "15 Jul • 10:45 AM" — compact, omits year.
+ * Date-only values show date only — never invent a time.
  */
 export const formatDateTimeShort = (value, tz) => {
   if (!value) return '—';
-  if (_isDateOnly(value)) {
-    return `${formatDate(value).replace(/\s\d{4}$/, '')} • ${formatTime(new Date(), tz)}`;
-  }
+  if (_isDateOnly(value)) return formatDate(value);
   const p = _parts(value, {
     day: 'numeric', month: 'short',
     hour: 'numeric', minute: '2-digit', hour12: true,
@@ -121,13 +118,11 @@ export const formatDateTimeShort = (value, tz) => {
 
 /**
  * { date: "15 Jul 2026", time: "10:45 AM" }
- * For date-only stored values, falls back to current system time.
+ * Date-only values return time: '' — caller shows only the date.
  */
 export const formatDateTimeSplit = (value, tz) => {
   if (!value) return { date: '—', time: '' };
-  if (_isDateOnly(value)) {
-    return { date: formatDate(value), time: formatTime(new Date(), tz) };
-  }
+  if (_isDateOnly(value)) return { date: formatDate(value), time: '' };
   const p = _parts(value, {
     day: 'numeric', month: 'short', year: 'numeric',
     hour: 'numeric', minute: '2-digit', hour12: true,
@@ -179,13 +174,13 @@ export const formatTableDateTime = (businessDate, createdAt) => {
   if (businessDate && hasTime(businessDate)) return formatDateTimeSplit(businessDate);
   if (businessDate && _isDateOnly(businessDate)) {
     const datePart = formatDate(businessDate);
-    // Use real timestamp if available; fall back to current system time
-    const timePart = (createdAt && hasTime(createdAt)) ? formatTime(createdAt) : formatTime(new Date());
+    // Only show time if createdAt is a real timestamp — never invent time
+    const timePart = (createdAt && hasTime(createdAt)) ? formatTime(createdAt) : '';
     return { date: datePart, time: timePart };
   }
   if (createdAt && hasTime(createdAt)) return formatDateTimeSplit(createdAt);
-  // Both values are date-only — use business/createdAt date + current system time
-  return { date: formatDate(createdAt || businessDate), time: formatTime(new Date()) };
+  // Both date-only: show date, no time
+  return { date: formatDate(createdAt || businessDate), time: '' };
 };
 
 /**

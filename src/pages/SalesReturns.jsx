@@ -102,12 +102,13 @@ function DetailModal({ ret, sym, onClose }) {
 
   return (
     <div
-      style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '48px 16px 32px', overflowY: 'auto', background: 'rgba(15,15,20,0.55)', backdropFilter: 'blur(3px)' }}
+      style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px 16px', overflowY: 'auto', background: 'rgba(15,15,20,0.55)', backdropFilter: 'blur(3px)' }}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div style={{
         width: '100%', maxWidth: 660,
-        maxHeight: 'calc(100vh - 96px)',
+        maxHeight: 'calc(100vh - 48px)',
+        marginTop: 'auto', marginBottom: 'auto',
         background: 'var(--surface)',
         borderRadius: 14,
         boxShadow: '0 24px 64px rgba(0,0,0,0.22), 0 4px 16px rgba(0,0,0,0.1)',

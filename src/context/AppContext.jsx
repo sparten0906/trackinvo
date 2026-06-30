@@ -112,7 +112,7 @@ function makeStxRecord({ productId, productName, sku, type, refType, refId, refN
     previousStock: Number(prevStock) || 0,
     newStock: Number(newStock) || 0,
     note: note || '',
-    createdAt: new Date().toISOString().slice(0, 10),
+    createdAt: new Date().toISOString(),
   };
 }
 
@@ -190,8 +190,8 @@ function makeDamageRecord(data, allRecords) {
     status: 'open',
     reportedDate: data.reportedDate || new Date().toISOString().slice(0, 10),
     resolvedDate: null,
-    createdAt: new Date().toISOString().slice(0, 10),
-    updatedAt: new Date().toISOString().slice(0, 10),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   };
 }
 
@@ -203,17 +203,17 @@ function reducer(state, action) {
     case 'SEED': next = { ...state, ...action.payload }; break;
 
     // CATEGORIES
-    case 'ADD_CATEGORY':    next = { ...state, categories: [...state.categories, { ...action.payload, id: action.payload.id || generateId('cat'), createdAt: action.payload.createdAt || new Date().toISOString().slice(0,10) }] }; break;
+    case 'ADD_CATEGORY':    next = { ...state, categories: [...state.categories, { ...action.payload, id: action.payload.id || generateId('cat'), createdAt: action.payload.createdAt || new Date().toISOString() }] }; break;
     case 'UPDATE_CATEGORY': next = { ...state, categories: state.categories.map((c) => c.id === action.payload.id ? { ...c, ...action.payload } : c) }; break;
     case 'DELETE_CATEGORY': next = { ...state, categories: state.categories.filter((c) => c.id !== action.payload) }; break;
 
     // SUPPLIERS
-    case 'ADD_SUPPLIER':    next = { ...state, suppliers: [...state.suppliers, { ...action.payload, id: action.payload.id || generateId('sup'), createdAt: action.payload.createdAt || new Date().toISOString().slice(0,10) }] }; break;
+    case 'ADD_SUPPLIER':    next = { ...state, suppliers: [...state.suppliers, { ...action.payload, id: action.payload.id || generateId('sup'), createdAt: action.payload.createdAt || new Date().toISOString() }] }; break;
     case 'UPDATE_SUPPLIER': next = { ...state, suppliers: state.suppliers.map((s) => s.id === action.payload.id ? { ...s, ...action.payload } : s) }; break;
     case 'DELETE_SUPPLIER': next = { ...state, suppliers: state.suppliers.filter((s) => s.id !== action.payload) }; break;
 
     case 'ADD_SUPPLIER_RATING': {
-      const rating = { id: generateId('srat'), ...action.payload, createdAt: action.payload.createdAt || new Date().toISOString().slice(0, 10) };
+      const rating = { id: generateId('srat'), ...action.payload, createdAt: action.payload.createdAt || new Date().toISOString() };
       next = { ...state, supplierRatings: [...state.supplierRatings, rating] };
       break;
     }
@@ -230,12 +230,12 @@ function reducer(state, action) {
     }
 
     // CUSTOMERS
-    case 'ADD_CUSTOMER':    next = { ...state, customers: [...state.customers, { ...action.payload, id: action.payload.id || generateId('cust'), createdAt: action.payload.createdAt || new Date().toISOString().slice(0,10) }] }; break;
+    case 'ADD_CUSTOMER':    next = { ...state, customers: [...state.customers, { ...action.payload, id: action.payload.id || generateId('cust'), createdAt: action.payload.createdAt || new Date().toISOString() }] }; break;
     case 'UPDATE_CUSTOMER': next = { ...state, customers: state.customers.map((c) => c.id === action.payload.id ? { ...c, ...action.payload } : c) }; break;
     case 'DELETE_CUSTOMER': next = { ...state, customers: state.customers.filter((c) => c.id !== action.payload) }; break;
 
     // PRODUCTS
-    case 'ADD_PRODUCT':    next = { ...state, products: [...state.products, { ...action.payload, id: action.payload.id || generateId('prod'), createdAt: action.payload.createdAt || new Date().toISOString().slice(0,10) }] }; break;
+    case 'ADD_PRODUCT':    next = { ...state, products: [...state.products, { ...action.payload, id: action.payload.id || generateId('prod'), createdAt: action.payload.createdAt || new Date().toISOString() }] }; break;
     case 'UPDATE_PRODUCT': next = { ...state, products: state.products.map((p) => p.id === action.payload.id ? { ...p, ...action.payload } : p) }; break;
     case 'DELETE_PRODUCT': next = { ...state, products: state.products.filter((p) => p.id !== action.payload) }; break;
 
@@ -351,7 +351,7 @@ function reducer(state, action) {
         id: data.id || generateId('pur'),
         gpNumber: data.gpNumber || genGPNumber(state.purchases),
         purchaseNumber: data.purchaseNumber || generateInvoiceNumber(state.settings.purchasePrefix, state.purchases),
-        createdAt: data.createdAt || new Date().toISOString().slice(0, 10),
+        createdAt: data.createdAt || new Date().toISOString(),
         returnStatus: data.returnStatus || 'none',
       };
       // fulfillmentStatus takes precedence over legacy status field for stock decisions
@@ -402,7 +402,7 @@ function reducer(state, action) {
           status: 'pending',
           items: [{ productId: item.productId, productName: item.productName, sku: item.sku || '', returnQty: rawQtyIn, unitCost: item.unitCost || 0, condition: item.condition }],
           totalAmount: (item.unitCost || 0) * rawQtyIn,
-          createdAt: new Date().toISOString().slice(0, 10),
+          createdAt: new Date().toISOString(),
         });
       });
 
@@ -503,7 +503,7 @@ function reducer(state, action) {
         returnNumber: action.payload.returnNumber || generateReturnNumber(
           state.settings.returnPrefix || 'RET', state.salesReturns
         ),
-        createdAt: action.payload.createdAt || new Date().toISOString().slice(0, 10),
+        createdAt: action.payload.createdAt || new Date().toISOString(),
       };
       // Restore stock for returned items — route by condition (good→sellable, damaged→damagedQty)
       const newTxs = [];
@@ -581,7 +581,7 @@ function reducer(state, action) {
         returnNumber: action.payload.returnNumber || generateReturnNumber(
           state.settings.purReturnPrefix || 'PRR', state.purchaseReturns
         ),
-        createdAt: action.payload.createdAt || new Date().toISOString().slice(0, 10),
+        createdAt: action.payload.createdAt || new Date().toISOString(),
         status: action.payload.status || 'pending',
       };
 
@@ -637,7 +637,7 @@ function reducer(state, action) {
 
       const applyUpdate = (extra = {}) => {
         const purchaseReturns = state.purchaseReturns.map(r =>
-          r.id === id ? { ...r, ...updates, updatedAt: new Date().toISOString().slice(0, 10) } : r
+          r.id === id ? { ...r, ...updates, updatedAt: new Date().toISOString() } : r
         );
         return { ...state, purchaseReturns, ...extra };
       };
@@ -678,7 +678,7 @@ function reducer(state, action) {
           products,
           damagedStockRecords: (state.damagedStockRecords || []).map(r =>
             r.id === existing.damagedStockId
-              ? { ...r, status: 'returned_rejected', updatedAt: new Date().toISOString().slice(0, 10) }
+              ? { ...r, status: 'returned_rejected', updatedAt: new Date().toISOString() }
               : r
           ),
           stockTransactions: [...state.stockTransactions, ...newTxs],
@@ -724,7 +724,7 @@ function reducer(state, action) {
         next = applyUpdate({
           damagedStockRecords: (state.damagedStockRecords || []).map(r =>
             r.id === existing.damagedStockId
-              ? { ...r, status: 'closed', resolvedDate: new Date().toISOString().slice(0, 10), updatedAt: new Date().toISOString().slice(0, 10) }
+              ? { ...r, status: 'closed', resolvedDate: new Date().toISOString().slice(0, 10), updatedAt: new Date().toISOString() }
               : r
           ),
         });
@@ -738,7 +738,7 @@ function reducer(state, action) {
     case 'UPDATE_SALES_RETURN': {
       const { id, updates } = action.payload;
       const salesReturns = state.salesReturns.map(r =>
-        r.id === id ? { ...r, ...updates, updatedAt: new Date().toISOString().slice(0, 10) } : r
+        r.id === id ? { ...r, ...updates, updatedAt: new Date().toISOString() } : r
       );
       next = { ...state, salesReturns };
       break;
@@ -817,7 +817,7 @@ function reducer(state, action) {
         ...state,
         products: newProducts,
         damagedStockRecords: (state.damagedStockRecords || []).map(r =>
-          r.id === recordId ? { ...r, status: statusMap[resolution] || 'open', resolvedDate: new Date().toISOString().slice(0, 10), notes: resNotes || r.notes, updatedAt: new Date().toISOString().slice(0, 10) } : r
+          r.id === recordId ? { ...r, status: statusMap[resolution] || 'open', resolvedDate: new Date().toISOString().slice(0, 10), notes: resNotes || r.notes, updatedAt: new Date().toISOString() } : r
         ),
         stockTransactions: [...state.stockTransactions, ...newTxs],
       };
@@ -865,8 +865,8 @@ function reducer(state, action) {
         totalAmount: qty * unitCost,
         notes: retNotes || record.notes || '',
         isAutoReturn: true,
-        createdAt: new Date().toISOString().slice(0, 10),
-        updatedAt: new Date().toISOString().slice(0, 10),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
       const newDamagedQty = product ? Math.max(0, (product.damagedQty || 0) - qty) : 0;
       const txn = makeStxRecord({
@@ -881,7 +881,7 @@ function reducer(state, action) {
         ...state,
         products: product ? state.products.map(p => p.id === record.productId ? { ...p, damagedQty: newDamagedQty } : p) : state.products,
         damagedStockRecords: (state.damagedStockRecords || []).map(r =>
-          r.id === recordId ? { ...r, status: 'replacement_pending', purchaseReturnId: newPRId, resolvedDate: new Date().toISOString().slice(0, 10), notes: retNotes || r.notes, updatedAt: new Date().toISOString().slice(0, 10) } : r
+          r.id === recordId ? { ...r, status: 'replacement_pending', purchaseReturnId: newPRId, resolvedDate: new Date().toISOString().slice(0, 10), notes: retNotes || r.notes, updatedAt: new Date().toISOString() } : r
         ),
         purchaseReturns: [...state.purchaseReturns, newPR],
         stockTransactions: [...state.stockTransactions, txn],
@@ -911,8 +911,8 @@ function reducer(state, action) {
         id:        action.payload.id       || generateId('po'),
         poNumber:  action.payload.poNumber || genPONumber(state.purchaseOrders),
         status:    action.payload.status   || 'created',
-        timeline: [{ status: 'created', date: new Date().toISOString().slice(0, 10), note: 'Purchase order created' }, ...(action.payload.timeline || [])],
-        createdAt: action.payload.createdAt || new Date().toISOString().slice(0, 10),
+        timeline: [{ status: 'created', date: new Date().toISOString(), note: 'Purchase order created' }, ...(action.payload.timeline || [])],
+        createdAt: action.payload.createdAt || new Date().toISOString(),
       };
       next = { ...state, purchaseOrders: [...state.purchaseOrders, po] };
       break;
@@ -922,7 +922,7 @@ function reducer(state, action) {
       const { id, status, note } = action.payload;
       const purchaseOrders = state.purchaseOrders.map(po => {
         if (po.id !== id) return po;
-        const entry = { status, date: new Date().toISOString().slice(0, 10), note: note || status };
+        const entry = { status, date: new Date().toISOString(), note: note || status };
         return { ...po, status, timeline: [...(po.timeline || []), entry] };
       });
       next = { ...state, purchaseOrders };
@@ -944,7 +944,7 @@ function reducer(state, action) {
         supplierId:    po.supplierId, supplierName: po.supplierName,
         receiptDate:   rcvDate, notes: rcvNotes || '',
         items:         receiptItems,
-        createdAt:     new Date().toISOString().slice(0, 10),
+        createdAt:     new Date().toISOString(),
       };
 
       // Update PO items — regular + extra quantity tracking
@@ -1052,7 +1052,7 @@ function reducer(state, action) {
               isExtraQuantity: isExtra,
             }],
             totalAmount: (r.unitCost || 0) * qty,
-            createdAt:   new Date().toISOString().slice(0, 10),
+            createdAt:   new Date().toISOString(),
           });
         };
 
@@ -1515,7 +1515,7 @@ function reducer(state, action) {
             isAutoReturn: true,
             items: [{ productId: r.productId, productName: r.productName, sku: r.sku || '', returnQty: qty, unitCost: r.unitCost || 0, condition: cond, gpItemId: r.gpItemId }],
             totalAmount: (r.unitCost || 0) * qty,
-            createdAt: new Date().toISOString().slice(0, 10),
+            createdAt: new Date().toISOString(),
           });
         });
       });
@@ -1575,7 +1575,7 @@ function reducer(state, action) {
         ...action.payload,
         id: action.payload.id || generateId('spay'),
         gpayNumber: gpayNum,
-        createdAt: action.payload.createdAt || new Date().toISOString().slice(0, 10),
+        createdAt: action.payload.createdAt || new Date().toISOString(),
       };
       let newCredits = state.supplierCredits || [];
       if (isUnlinkedGpay) {
@@ -1615,7 +1615,7 @@ function reducer(state, action) {
     }
     case 'APPLY_SUPPLIER_CREDIT': {
       const { creditId, payment } = action.payload;
-      const creditPayment = { ...payment, id: generateId('spay'), fromCreditId: creditId, createdAt: new Date().toISOString().slice(0, 10) };
+      const creditPayment = { ...payment, id: generateId('spay'), fromCreditId: creditId, createdAt: new Date().toISOString() };
       const updatedCredits = (state.supplierCredits || []).map(c => {
         if (c.id !== creditId) return c;
         const used = Number(c.usedAmount || 0) + Number(payment.paymentAmount);
@@ -1630,7 +1630,7 @@ function reducer(state, action) {
         id: action.payload.id || generateId('gpbl'),
         payableNumber: genPayableNumber(state.generalPayables),
         payments: [],
-        createdAt: new Date().toISOString().slice(0, 10),
+        createdAt: new Date().toISOString(),
       };
       next = { ...state, generalPayables: [...(state.generalPayables || []), gpbl] };
       break;
@@ -1657,7 +1657,7 @@ function reducer(state, action) {
         id: generateId('pcat'),
         name: action.payload.name.trim(),
         isCustom: true,
-        createdAt: new Date().toISOString().slice(0, 10),
+        createdAt: new Date().toISOString(),
       };
       next = { ...state, payableCategories: [...(state.payableCategories || []), cat] };
       break;
@@ -1668,7 +1668,7 @@ function reducer(state, action) {
         ...state,
         generalPayables: (state.generalPayables || []).map(p => {
           if (p.id !== payableId) return p;
-          const payments = [...(p.payments || []), { ...pmtData, id: generateId('gpay'), createdAt: new Date().toISOString().slice(0, 10) }];
+          const payments = [...(p.payments || []), { ...pmtData, id: generateId('gpay'), createdAt: new Date().toISOString() }];
           return { ...p, payments };
         }),
       };
