@@ -460,6 +460,114 @@ exception when duplicate_object then null;
 end;
 $$;
 
+-- ─── Purchase Orders ─────────────────────────────────────────────────────────
+create table if not exists public.purchase_orders (
+  id            uuid primary key default uuid_generate_v4(),
+  po_number     text not null unique,
+  supplier_id   uuid references public.suppliers(id) on delete set null,
+  supplier_name text,
+  status        text not null default 'created' check (status in (
+    'created','sent','approved','partially_received','received',
+    'cancelled','rejected','closed'
+  )),
+  order_date    date not null default current_date,
+  expected_date date,
+  supplier_ref  text,
+  payment_terms text,
+  notes         text,
+  subtotal      numeric(12,2) not null default 0,
+  grand_total   numeric(12,2) not null default 0,
+  timeline      jsonb not null default '[]',
+  created_at    timestamptz not null default now(),
+  updated_at    timestamptz not null default now()
+);
+
+create index if not exists po_number_idx   on public.purchase_orders(po_number);
+create index if not exists po_supplier_idx on public.purchase_orders(supplier_id);
+create index if not exists po_status_idx   on public.purchase_orders(status);
+create index if not exists po_date_idx     on public.purchase_orders(order_date);
+
+-- ─── Purchase Order Items ─────────────────────────────────────────────────────
+create table if not exists public.purchase_order_items (
+  id                    uuid primary key default uuid_generate_v4(),
+  po_id                 uuid not null references public.purchase_orders(id) on delete cascade,
+  product_id            uuid references public.products(id) on delete set null,
+  product_name          text not null,
+  sku                   text,
+  description           text,
+  unit                  text,
+  quantity              integer not null default 1 check (quantity > 0),
+  received_qty          integer not null default 0,
+  unit_cost             numeric(12,2) not null default 0,
+  selling_price         numeric(12,2) not null default 0,
+  tax_percent           numeric(5,2) not null default 0,
+  hsn_sac               text,
+  category_id           uuid references public.categories(id) on delete set null,
+  brand                 text,
+  is_new_product        boolean not null default false,
+  product_linked        boolean not null default false,
+  created_at            timestamptz not null default now()
+);
+
+create index if not exists po_items_po_idx      on public.purchase_order_items(po_id);
+create index if not exists po_items_product_idx on public.purchase_order_items(product_id);
+
+-- ─── Purchase Receipts (GRN) ─────────────────────────────────────────────────
+create table if not exists public.purchase_receipts (
+  id             uuid primary key default uuid_generate_v4(),
+  receipt_number text not null unique,
+  po_id          uuid references public.purchase_orders(id) on delete set null,
+  po_number      text,
+  supplier_id    uuid references public.suppliers(id) on delete set null,
+  supplier_name  text,
+  receipt_date   date not null default current_date,
+  notes          text,
+  created_at     timestamptz not null default now()
+);
+
+create index if not exists grn_po_idx   on public.purchase_receipts(po_id);
+create index if not exists grn_date_idx on public.purchase_receipts(receipt_date);
+
+-- ─── Purchase Receipt Items ───────────────────────────────────────────────────
+create table if not exists public.purchase_receipt_items (
+  id           uuid primary key default uuid_generate_v4(),
+  receipt_id   uuid not null references public.purchase_receipts(id) on delete cascade,
+  po_item_id   uuid references public.purchase_order_items(id) on delete set null,
+  product_id   uuid references public.products(id) on delete set null,
+  product_name text not null,
+  sku          text,
+  ordered_qty  integer not null default 0,
+  received_qty integer not null default 0,
+  condition    text,
+  notes        text,
+  created_at   timestamptz not null default now()
+);
+
+create index if not exists grn_items_receipt_idx on public.purchase_receipt_items(receipt_id);
+create index if not exists grn_items_product_idx on public.purchase_receipt_items(product_id);
+
+-- RLS for purchase orders tables
+alter table public.purchase_orders        enable row level security;
+alter table public.purchase_order_items   enable row level security;
+alter table public.purchase_receipts      enable row level security;
+alter table public.purchase_receipt_items enable row level security;
+
+create policy "auth_all_purchase_orders"        on public.purchase_orders        for all to authenticated using (true) with check (true);
+create policy "auth_all_purchase_order_items"   on public.purchase_order_items   for all to authenticated using (true) with check (true);
+create policy "auth_all_purchase_receipts"      on public.purchase_receipts      for all to authenticated using (true) with check (true);
+create policy "auth_all_purchase_receipt_items" on public.purchase_receipt_items for all to authenticated using (true) with check (true);
+
+do $$
+begin
+  execute '
+    create trigger purchase_orders_updated_at
+    before update on public.purchase_orders
+    for each row execute procedure public.handle_updated_at();
+  ';
+exception when duplicate_object then null;
+end;
+$$;
+
 -- ─── Convenience views ────────────────────────────────────────────────────────
 create or replace view public.low_stock_products as
   select id, name, sku, current_stock, minimum_stock, unit
